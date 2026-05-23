@@ -14,8 +14,8 @@ found in the project's repository.
 # Setting up the Randomizer
 **To set up Archipelago and host a multiworld, refer to the [Official Archipelago Setup Guide](https://archipelago.gg/tutorial/Archipelago/setup_en)** \
 For the client, you have two choices how you obtain it:
-1. Download the latest client from the [releases page](releases/latest) (Recommended, might not have the latest hotfixes).
-2. You log into Github and download the latest from the project's [actions page](actions) (Always has the latest fixes).
+1. Download the latest client from the [releases page](https://github.com/vicr123/PvZ-Stable-Decompile-AP/releases/latest) (Recommended, might not have the latest hotfixes).
+2. You log into Github and download the latest from the project's [actions page](https://github.com/vicr123/PvZ-Stable-Decompile-AP/actions) (Always has the latest fixes).
 
 The following steps are the same, no matter what you choose in the last step:
 - Download the zip file appropriate to your system (32 bit: Win32, 64 bit: x64) to your chosen directory
