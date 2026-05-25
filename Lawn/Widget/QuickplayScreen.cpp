@@ -767,7 +767,7 @@ void QuickplayWidget::CalculateLevelFullyCleared()
 		auto all_flags_clear = true;
 		for (auto wave = 0; wave < 100; wave++)
 		{
-			auto wave_location = PVZRAPData::Locations::Wave(level, wave);
+			auto wave_location = PVZRAPData::Locations::Wave(level + 1, wave);
 			if (!mApp->mAP->IsLocationChecked(wave_location) && mApp->mAP->IsLocationPresent(wave_location))
 			{
 				all_flags_clear = false;
