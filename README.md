@@ -31,8 +31,8 @@ The following steps are the same, no matter what you choose in the last step:
 - If you would like to continue at a later point, simply just reconnect to the room you previously played.
 
 # Troubleshooting
-If you need further help, join the [Archipelago Discord](https://discord.gg/archipelago) and visit the `Plants Vs Zombies GOTY` 
-thread in the `future-game-design` forum channel (located at the bottom). \
+If you need further help, join the [Archipelago Discord](https://discord.gg/archipelago) and visit the `#plants-vs-zombies-goty` 
+channel in the `Custom Games N-Z` category. \
 Depending on your issue you should contact the following developer (these are their discord names):
 - If you have **client related issues** contact Victor Tran.
 - If you have **apworld related issues** contact Bonzorio (PvZ/K-On! AP Dev).
