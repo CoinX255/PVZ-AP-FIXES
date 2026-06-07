@@ -510,6 +510,14 @@ Board::Board(LawnApp* theApp)
 					mApp->PlayFoley(FoleyType::FOLEY_WAKEUP);
 					break;
 				}
+			case PVZRAPData::Items::TRAP_RV:
+				{
+					auto zombie = AddZombie(ZombieType::ZOMBIE_BOSS, -1);
+					zombie->BossRVAttack();
+					zombie->mZombieFade = 300;
+					zombie->mFireballRow = 999;
+					break;
+				}
 			}
 		}
 	});
