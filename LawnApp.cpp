@@ -66,6 +66,7 @@
 #include <nlohmann/json.hpp>
 
 #include "Lawn/MessageWidget.h"
+#include "Lawn/Widget/ArchipelagoConnectingDialog.h"
 #include "Lawn/Widget/ArchipelagoStatusDialog.h"
 #include "Lawn/Widget/ArchipelagoTextClient.h"
 #include "SexyAppFramework/APData.h"
@@ -5138,7 +5139,11 @@ void LawnApp::KillAPTextClient()
 
 void LawnApp::ShowAPConnectingDialog()
 {
-	mConnectingDialog = DoDialog(Dialogs::DIALOG_ARCHIPELAGO_CONNECTING, true, "Connecting to Archipelago...", "Please wait for the connection to be established", "Cancel", Dialog::BUTTONS_FOOTER);
+	KillDialog(Dialogs::DIALOG_ARCHIPELAGO_CONNECTING);
+	
+	mConnectingDialog = new ArchipelagoConnectingDialog(this);
+	CenterDialog(mConnectingDialog, mConnectingDialog->mWidth, mConnectingDialog->mHeight);
+	AddDialog(Dialogs::DIALOG_ARCHIPELAGO_CONNECTING, mConnectingDialog);
 }
 
 void LawnApp::EnsureArchipelagoConnected(std::function<void()> callback)
@@ -5474,7 +5479,13 @@ void LawnApp::SetupArchipelago()
 			message.append("\nIf you require further assistance, please check the Plants vs. Zombies: GOTY channel on the Archipelago server.");
 		}
 		
-		this->DoDialog(Dialogs::DIALOG_ARCHIPELAGO_CONNECTING, true, "Unable to connect to Archipelago", message, "OK", Dialog::BUTTONS_FOOTER);
+		auto aDialog = (LawnDialog*) this->DoDialog(Dialogs::DIALOG_ARCHIPELAGO_CONNECTING, true, "Unable to connect to Archipelago", message, "OK", Dialog::BUTTONS_FOOTER);
+    
+		aDialog->mReanimation->AddReanimation(160, 42.0f, ReanimationType::REANIM_ZOMBIE_CHARRED);
+		aDialog->mReanimation->mReanim->mLoopType = ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD;
+		aDialog->mSpaceAfterHeader = 155;
+		aDialog->CalcSize(0, 10);
+		CenterDialog(aDialog, aDialog->mWidth, aDialog->mHeight);
 	});
 	this->mAP->AddDeathLinkListener([this](const std::string& player, const std::string& reason)
 	{
