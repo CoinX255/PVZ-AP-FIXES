@@ -5471,7 +5471,7 @@ void LawnApp::SetupArchipelago()
 			message = "This version of Plants vs. Zombies is not compatible with the server.";
 #endif
 			message.append("\nThe server game was generated on version " + gen_version);
-			message.append("\nIf you require further assistance, please check the Plants vs. Zombies channel on the Archipelago server.");
+			message.append("\nIf you require further assistance, please check the Plants vs. Zombies: GOTY channel on the Archipelago server.");
 		}
 		
 		this->DoDialog(Dialogs::DIALOG_ARCHIPELAGO_CONNECTING, true, "Unable to connect to Archipelago", message, "OK", Dialog::BUTTONS_FOOTER);
