@@ -551,6 +551,8 @@ public:
 	void							MovePlant(Plant* thePlant, int theGridX, int theGridY);
 	void							DrawCover(Graphics* g);
 	void							DrawForeGround(Graphics* g);
+	
+	SeedType						RandomSeed(bool isTrap = false, bool forceAquatic = false);
 
 #ifdef _REPLANTED_SPEED_CONTROL
 	float							GetSpeedValue(SpeedMod theMod);
