@@ -512,6 +512,24 @@ Board::Board(LawnApp* theApp)
 					mApp->PlayFoley(FoleyType::FOLEY_FLOOP);
 					break;
 				}
+			case PVZRAPData::Items::TRAP_ZOMBIE_HYPNOSIS:
+				{
+					if (mApp->mGameMode == GAMEMODE_CHALLENGE_ZOMBIQUARIUM || mApp->IsIZombieLevel())
+					{
+						break;
+					}
+					
+					Zombie* aZombie = nullptr;
+					while (IterateZombies(aZombie))
+					{
+						if (aZombie->mZombieType == ZombieType::ZOMBIE_BOSS)
+						{
+							continue;
+						}
+						aZombie->StartMindControlled();
+					}
+					break;
+				}
 			}
 		}
 	});
