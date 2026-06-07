@@ -13,6 +13,23 @@
 const int CHAT_LINE_HEIGHT = 10;
 const int CHAT_WIDTH = 600;
 
+APTextEditWidget::APTextEditWidget(ArchipelagoTextClient* parent, int theId, EditListener* theListener,
+    Dialog* theDialog) : LawnEditWidget(theId, theListener, theDialog)
+{
+    mParent = parent;    
+}
+
+APTextEditWidget::~APTextEditWidget()
+{
+}
+
+void APTextEditWidget::MouseWheel(int theDelta)
+{
+    LawnEditWidget::MouseWheel(theDelta);
+    
+    mParent->MouseWheel(theDelta);
+}
+
 ArchipelagoTextClient::ArchipelagoTextClient(LawnApp* theApp)
 {
     mApp = theApp;
@@ -20,7 +37,18 @@ ArchipelagoTextClient::ArchipelagoTextClient(LawnApp* theApp)
     mScroll = 0;
     mCurrentHistoryItem = -1;
     
-    mMessageEditWidget = CreateEditWidget(0, this, nullptr);
+    int gLawnEditWidgetColors[][4] = {
+        { 0,   0,   0,   0 },
+        { 0,   0,   0,   0 },
+        { 240, 240, 255, 255 },
+        { 255, 255, 255, 255 },
+        { 0,   0,   0,   255 },
+    };
+    
+    mMessageEditWidget = new APTextEditWidget(this, 0, this, nullptr);
+    mMessageEditWidget->SetFont(Sexy::FONT_BRIANNETOD16);
+    mMessageEditWidget->SetColors(gLawnEditWidgetColors, EditWidget::NUM_COLORS);
+    mMessageEditWidget->mBlinkDelay = 14;
     mMessageEditWidget->DisableAutocap();
     mMessageEditWidget->SetFont(FONT_PICO129);
     mMessageEditWidget->Resize(0, BOARD_HEIGHT - FONT_PICO129->GetHeight() - 10, CHAT_WIDTH, FONT_PICO129->GetHeight());
@@ -147,6 +175,22 @@ void ArchipelagoTextClient::Down()
     }
 }
 
+void ArchipelagoTextClient::PgUp()
+{
+    mScroll += 10;
+    mScroll = std::max<int64_t>(mScroll, 0);
+    
+    UpdateLines();
+}
+
+void ArchipelagoTextClient::PgDown()
+{
+    mScroll += -10;
+    mScroll = std::max<int64_t>(mScroll, 0);
+    
+    UpdateLines();
+}
+
 void ArchipelagoTextClient::UpdateLines()
 {
     mLines.clear();
@@ -207,7 +251,11 @@ void ArchipelagoTextClient::UpdateLines()
             
             for (auto wrap = wraps.rbegin(); wrap != wraps.rend(); ++wrap)
             {
-                if (i < mScroll) continue;
+                if (i < mScroll)
+                {
+                    i++;
+                    continue;
+                }
                 
                 mLines.push_front(" " + *wrap);
                 i++;

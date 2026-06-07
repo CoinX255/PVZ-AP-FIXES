@@ -20,6 +20,8 @@ public:
 	virtual void            BackTab() {};
 	virtual void            Up() {};
 	virtual void            Down() {};
+	virtual void            PgUp() {};
+	virtual void            PgDown() {};
 };
 
 }

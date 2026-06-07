@@ -499,6 +499,14 @@ void EditWidget::ProcessKey(KeyCode theKey, SexyChar theChar)
 			mEditListener->Tab();
 		}
 	}
+	else if (theKey == KEYCODE_PRIOR)
+	{
+		mEditListener->PgUp();
+	}
+	else if (theKey == KEYCODE_NEXT)
+	{
+		mEditListener->PgDown();
+	}
 	else
 	{
 		SexyString aString = SexyString(1, theChar);
