@@ -1,6 +1,7 @@
 #ifndef __LAWNAPP_H__
 #define __LAWNAPP_H__
 
+#include <functional>
 #include <memory>
 
 #include "ConstEnums.h"
@@ -187,6 +188,7 @@ public:
 
 	int								mPlayerLevelRef;
 	bool                            mEnableFPS;
+	std::function<void()>			mConnectedCallback;
 
 public:
 	LawnApp();
@@ -416,7 +418,7 @@ public:
 	void							KillAPTextClient();
 	void							ShowAPConnectingDialog();
 	
-	bool							EnsureArchipelagoConnected();
+	void							EnsureArchipelagoConnected(std::function<void()> callback);
 	void							DrawArchipelagoOverlayElements(Graphics* g);
 	void							UpdateArchipelagoOverlayElements();
 	bool                            IsLevelOpen(int level) const;

@@ -1912,11 +1912,8 @@ void GameSelector::ButtonPress(int theId, int theClickCount)
 //0x44C590
 void GameSelector::ClickedAdventure()
 {
-	if (!mApp->EnsureArchipelagoConnected())
+	mApp->EnsureArchipelagoConnected([this]
 	{
-		return;
-	}
-	
 	auto levels_unlocked = 0;
 	for (auto level = 1; level <= 50; level++)
 	{
@@ -1952,6 +1949,7 @@ void GameSelector::ClickedAdventure()
 	aSplotLightReanim->mLoopType = ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD;
 	mSpotLightID = mApp->ReanimationGetID(aSplotLightReanim);
 #endif
+	});
 }
 
 void GameSelector::ClickedTrophy()
@@ -1980,26 +1978,25 @@ void GameSelector::ClickedTrophy()
 	}
 	else
 	{
-		if (!mApp->EnsureArchipelagoConnected())
+		mApp->EnsureArchipelagoConnected([this]
 		{
-			return;
-		}
+			auto gp = mApp->GetGoalProgress();
 		
-		auto gp = mApp->GetGoalProgress();
-		
-		std::stringstream goal_status;
-		goal_status << std::format("Adventure Levels: {}/{}", std::to_string(gp.adventure_levels_complete), std::to_string(gp.adventure_levels_goal)) << "\n";
-		goal_status << std::format("Adventure Areas: {}/{}", std::to_string(gp.adventure_areas_complete), std::to_string(gp.adventure_areas_goal)) << "\n";
-		goal_status << std::format("Minigame Levels: {}/{}", std::to_string(gp.minigame_levels_complete), std::to_string(gp.minigame_levels_goal)) << "\n";
-		goal_status << std::format("Puzzle Levels: {}/{}", std::to_string(gp.puzzle_levels_complete), std::to_string(gp.puzzle_levels_goal)) << "\n";
-		goal_status << std::format("Survival Levels: {}/{}", std::to_string(gp.survival_levels_complete), std::to_string(gp.survival_levels_goal)) << "\n";
-		goal_status << std::format("Total Levels: {}/{}", std::to_string(gp.overall_levels_complete), std::to_string(gp.overall_levels_goal)) << "\n";
-		if (gp.taco_goal > 0)
-		{
-			goal_status << std::format("Tacos: {}/{}", std::to_string(gp.taco_received), std::to_string(gp.taco_goal));
-		}
-		
-		mApp->DoDialog(Dialogs::DIALOG_MESSAGE, true, _S("Goal"), goal_status.str(), _S("OK"), Dialog::BUTTONS_FOOTER);
+			std::stringstream goal_status;
+			goal_status << std::format("Adventure Levels: {}/{}", std::to_string(gp.adventure_levels_complete), std::to_string(gp.adventure_levels_goal)) << "\n";
+			goal_status << std::format("Adventure Areas: {}/{}", std::to_string(gp.adventure_areas_complete), std::to_string(gp.adventure_areas_goal)) << "\n";
+			goal_status << std::format("Minigame Levels: {}/{}", std::to_string(gp.minigame_levels_complete), std::to_string(gp.minigame_levels_goal)) << "\n";
+			goal_status << std::format("Puzzle Levels: {}/{}", std::to_string(gp.puzzle_levels_complete), std::to_string(gp.puzzle_levels_goal)) << "\n";
+			goal_status << std::format("Survival Levels: {}/{}", std::to_string(gp.survival_levels_complete), std::to_string(gp.survival_levels_goal)) << "\n";
+			goal_status << std::format("Total Levels: {}/{}", std::to_string(gp.overall_levels_complete), std::to_string(gp.overall_levels_goal)) << "\n";
+			if (gp.taco_goal > 0)
+			{
+				goal_status << std::format("Tacos: {}/{}", std::to_string(gp.taco_received), std::to_string(gp.taco_goal));
+			}
+					
+			mApp->DoDialog(Dialogs::DIALOG_MESSAGE, true, _S("Goal"), goal_status.str(), _S("OK"), Dialog::BUTTONS_FOOTER);
+
+		});
 	}
 }
 
@@ -2015,140 +2012,158 @@ void GameSelector::ButtonDepress(int theId)
 	if (mSlideCounter > 0 || mStartingGame)
 		return;
 	
-	if (theId == GameSelector::GameSelector_Minigame || theId == GameSelector::GameSelector_Puzzle || theId == GameSelector::GameSelector_Survival || theId == GameSelector_Store)
+	auto proceed = [this, theId]
 	{
-		if (!mApp->EnsureArchipelagoConnected())
+		bool have_level_items = false;
+
+		if (theId == GameSelector::GameSelector_Minigame && mMinigamesLocked)
 		{
+			if (mApp->mAP->ConnectionStatus() == APWrapper::ConnectionStatus::Connected)
+			{
+				have_level_items = mApp->mSlotData->minigame_levels() == PVZRAPData::SlotData::LevelRandomisation::LevelItems;
+			}
+			mApp->LawnMessageBox(Dialogs::DIALOG_MESSAGE, _S("[MODE_LOCKED]"), have_level_items ? _S("Obtain a mini-game from Archipelago to play mini-games") : _S("Obtain the Mini-games item from Archipelago to play mini-games"), _S("[DIALOG_BUTTON_OK]"), _S(""), Dialog::BUTTONS_FOOTER);
 			return;
 		}
-	}
-	
-	bool have_level_items = false;
+		if (theId == GameSelector::GameSelector_Puzzle && mPuzzleLocked)
+		{
+			if (mApp->mAP->ConnectionStatus() == APWrapper::ConnectionStatus::Connected)
+			{
+				have_level_items = mApp->mSlotData->puzzle_levels() == PVZRAPData::SlotData::LevelRandomisation::LevelItems;
+			}
+			mApp->LawnMessageBox(Dialogs::DIALOG_MESSAGE, _S("[MODE_LOCKED]"), have_level_items ? _S("Obtain a puzzle level from Archipelago to play puzzle mode") : _S("Obtain the Puzzle Mode item from Archipelago to play puzzle mode"), _S("[DIALOG_BUTTON_OK]"), _S(""), Dialog::BUTTONS_FOOTER);
+			return;
+		}
+		if (theId == GameSelector::GameSelector_Survival && mSurvivalLocked)
+		{
+			if (mApp->mAP->ConnectionStatus() == APWrapper::ConnectionStatus::Connected)
+			{
+				have_level_items = mApp->mSlotData->survival_levels() == PVZRAPData::SlotData::LevelRandomisation::LevelItems;
+			}
+			mApp->LawnMessageBox(Dialogs::DIALOG_MESSAGE, _S("[MODE_LOCKED]"), have_level_items ? _S("Obtain a survival level from Archipelago to play survival mode") : _S("Obtain the Survival Mode item from Archipelago to play survival mode"), _S("[DIALOG_BUTTON_OK]"), _S(""), Dialog::BUTTONS_FOOTER);
+			return;
+		}
+		if (theId == GameSelector::GameSelector_Store && !mApp->CanShowStore())
+		{
+			mApp->LawnMessageBox(Dialogs::DIALOG_MESSAGE, _S("[MODE_LOCKED]"), _S("Obtain Crazy Dave's Car Keys or Progressive Twiddydinkies to access the shop."), _S("[DIALOG_BUTTON_OK]"), _S(""), Dialog::BUTTONS_FOOTER);
+			return;
+		}
+		if (theId == GameSelector::GameSelector_Store && !mApp->CanShowAlmanac())
+		{
+			mApp->LawnMessageBox(Dialogs::DIALOG_MESSAGE, _S("[MODE_LOCKED]"), _S("Obtain the Suburban Almanac from Archipelago to access the Almanac."), _S("[DIALOG_BUTTON_OK]"), _S(""), Dialog::BUTTONS_FOOTER);
+			return;
+		}
+		if (theId == GameSelector::GameSelector_Store && !mApp->CanShowZenGarden())
+		{
+			mApp->LawnMessageBox(Dialogs::DIALOG_MESSAGE, _S("[MODE_LOCKED]"), _S("Obtain the Zen Garden from Archipelago to access the Zen Garden."), _S("[DIALOG_BUTTON_OK]"), _S(""), Dialog::BUTTONS_FOOTER);
+			return;
+		}
 
-	if (theId == GameSelector::GameSelector_Minigame && mMinigamesLocked)
-	{
-		if (mApp->mAP->ConnectionStatus() == APWrapper::ConnectionStatus::Connected)
+		switch (theId)
 		{
-			have_level_items = mApp->mSlotData->minigame_levels() == PVZRAPData::SlotData::LevelRandomisation::LevelItems;
-		}
-		mApp->LawnMessageBox(Dialogs::DIALOG_MESSAGE, _S("[MODE_LOCKED]"), have_level_items ? _S("Obtain a mini-game from Archipelago to play mini-games") : _S("Obtain the Mini-games item from Archipelago to play mini-games"), _S("[DIALOG_BUTTON_OK]"), _S(""), Dialog::BUTTONS_FOOTER);
-		return;
-	}
-	if (theId == GameSelector::GameSelector_Puzzle && mPuzzleLocked)
-	{
-		if (mApp->mAP->ConnectionStatus() == APWrapper::ConnectionStatus::Connected)
-		{
-			have_level_items = mApp->mSlotData->puzzle_levels() == PVZRAPData::SlotData::LevelRandomisation::LevelItems;
-		}
-		mApp->LawnMessageBox(Dialogs::DIALOG_MESSAGE, _S("[MODE_LOCKED]"), have_level_items ? _S("Obtain a puzzle level from Archipelago to play puzzle mode") : _S("Obtain the Puzzle Mode item from Archipelago to play puzzle mode"), _S("[DIALOG_BUTTON_OK]"), _S(""), Dialog::BUTTONS_FOOTER);
-		return;
-	}
-	if (theId == GameSelector::GameSelector_Survival && mSurvivalLocked)
-	{
-		if (mApp->mAP->ConnectionStatus() == APWrapper::ConnectionStatus::Connected)
-		{
-			have_level_items = mApp->mSlotData->survival_levels() == PVZRAPData::SlotData::LevelRandomisation::LevelItems;
-		}
-		mApp->LawnMessageBox(Dialogs::DIALOG_MESSAGE, _S("[MODE_LOCKED]"), have_level_items ? _S("Obtain a survival level from Archipelago to play survival mode") : _S("Obtain the Survival Mode item from Archipelago to play survival mode"), _S("[DIALOG_BUTTON_OK]"), _S(""), Dialog::BUTTONS_FOOTER);
-		return;
-	}
-
-	switch (theId)
-	{
-	case GameSelector::GameSelector_Adventure:
-		ClickedAdventure();
-		break;
-	case GameSelector::GameSelector_Minigame:
-		mApp->KillGameSelector();
-		mApp->ShowChallengeScreen(ChallengePage::CHALLENGE_PAGE_CHALLENGE);
-		break;
-	case GameSelector::GameSelector_Puzzle:
-		mApp->KillGameSelector();
-		mApp->ShowChallengeScreen(ChallengePage::CHALLENGE_PAGE_PUZZLE);
-		break;
-	case GameSelector::GameSelector_Survival:
-		mApp->KillGameSelector();
-		mApp->ShowChallengeScreen(ChallengePage::CHALLENGE_PAGE_SURVIVAL);
-		break;
-	case GameSelector::GameSelector_Quit:
-		mApp->ConfirmQuit();
-		break;
-	case GameSelector::GameSelector_Help:
-		mApp->KillGameSelector();
-		mApp->ShowAwardScreen(AwardType::AWARD_HELP_ZOMBIENOTE, 0, false);
-		break;
-	case GameSelector::GameSelector_Options:
-		mApp->DoNewOptions(true);
-		break;
-	case GameSelector::GameSelector_ChangeUser:
-		mApp->DoArchipelagoStatusDialog();
-		break;
-	case GameSelector::GameSelector_Store:
-	{
-		StoreScreen* aStore = mApp->ShowStoreScreen();
-		aStore->WaitForResult(true);
-		if (aStore->mGoToTreeNow)
-		{
+		case GameSelector::GameSelector_Adventure:
+			ClickedAdventure();
+			break;
+		case GameSelector::GameSelector_Minigame:
 			mApp->KillGameSelector();
-			mApp->PreNewGame(GameMode::GAMEMODE_TREE_OF_WISDOM, false);
-		}
-		else
-			mApp->mMusic->MakeSureMusicIsPlaying(MusicTune::MUSIC_TUNE_TITLE_CRAZY_DAVE_MAIN_THEME);
-
-		break;
-	}
-	case GameSelector::GameSelector_Almanac:
-		mApp->DoAlmanacDialog()->WaitForResult(true);
-		mApp->mMusic->MakeSureMusicIsPlaying(MusicTune::MUSIC_TUNE_TITLE_CRAZY_DAVE_MAIN_THEME);
-		break;
-	case GameSelector::GameSelector_ZenGarden:
-		mApp->KillGameSelector();
-		mApp->PreNewGame(GameMode::GAMEMODE_CHALLENGE_ZEN_GARDEN, false);
-		if (ShouldDoZenTuturialBeforeAdventure())
-			mApp->mZenGarden->SetupForZenTutorial();
-		break;
-#ifdef _HAS_ZOMBATAR
-	case GameSelector::GameSelector_Zombatar:
-	{
-		if (mApp->mPlayerInfo->mAckZombatarTOS)
+			mApp->ShowChallengeScreen(ChallengePage::CHALLENGE_PAGE_CHALLENGE);
+			break;
+		case GameSelector::GameSelector_Puzzle:
+			mApp->KillGameSelector();
+			mApp->ShowChallengeScreen(ChallengePage::CHALLENGE_PAGE_PUZZLE);
+			break;
+		case GameSelector::GameSelector_Survival:
+			mApp->KillGameSelector();
+			mApp->ShowChallengeScreen(ChallengePage::CHALLENGE_PAGE_SURVIVAL);
+			break;
+		case GameSelector::GameSelector_Quit:
+			mApp->ConfirmQuit();
+			break;
+		case GameSelector::GameSelector_Help:
+			mApp->KillGameSelector();
+			mApp->ShowAwardScreen(AwardType::AWARD_HELP_ZOMBIENOTE, 0, false);
+			break;
+		case GameSelector::GameSelector_Options:
+			mApp->DoNewOptions(true);
+			break;
+		case GameSelector::GameSelector_ChangeUser:
+			mApp->DoArchipelagoStatusDialog();
+			break;
+		case GameSelector::GameSelector_Store:
 		{
-			ShowZombatarScreen();
-		}
-		else
-		{
-			mApp->ShowZombatarTOS();
-		}
-		break;
-	}
-#endif
-#ifdef _HAS_ACHIEVEMENTS
-	case GameSelector::GameSelector_AchievementsBack: // @Patoke: seems to be unused
-		//SlideTo(0, 0);
-		break;
-	case GameSelector::GameSelector_Achievements:
-		mApp->DoDialog(Dialogs::DIALOG_INFO, true, "Achievements Not Available", "Achievements are not enabled when playing on Archipelago", "OK", Dialog::BUTTONS_FOOTER);
-		// ShowAchievementsScreen();
-		break;
-#endif
-#ifdef _HAS_MORESCREEN
-	case GameSelector::GameSelector_QuickPlay:
-		ShowMoreScreen();
-		// GameSelector::ShowQuickPlayScreen();
-		break;
-#endif
-#ifdef _HAS_UNLOCK
-	case GameSelector::GameSelector_Unlock:
-		if (mApp->mPlayerInfo)
-		{
-			if (mApp->mPlayerInfo->mHasUsedCheatKeys)
-				mApp->DoDialog(Dialogs::DIALOG_ALREADY_UNLOCK, true, _S("[ALREADY_UNLOCKED_DIALOG_HEADER]"), _S("[ALREADY_UNLOCKED_DIALOG_BODY]"), _S("OK"), Dialog::BUTTONS_FOOTER);
+			StoreScreen* aStore = mApp->ShowStoreScreen();
+			aStore->WaitForResult(true);
+			if (aStore->mGoToTreeNow)
+			{
+				mApp->KillGameSelector();
+				mApp->PreNewGame(GameMode::GAMEMODE_TREE_OF_WISDOM, false);
+			}
 			else
-				mApp->DoDialog(Dialogs::DIALOG_UNLOCK, true, _S("[UNLOCK_DIALOG_HEADER]"), _S("[UNLOCK_DIALOG_BODY]"), _S(""), Dialog::BUTTONS_YES_NO);
+				mApp->mMusic->MakeSureMusicIsPlaying(MusicTune::MUSIC_TUNE_TITLE_CRAZY_DAVE_MAIN_THEME);
+
+			break;
 		}
-		break;
-#endif
-	case GameSelector::GameSelector_Trophy:
-		ClickedTrophy();
+		case GameSelector::GameSelector_Almanac:
+			mApp->DoAlmanacDialog()->WaitForResult(true);
+			mApp->mMusic->MakeSureMusicIsPlaying(MusicTune::MUSIC_TUNE_TITLE_CRAZY_DAVE_MAIN_THEME);
+			break;
+		case GameSelector::GameSelector_ZenGarden:
+			mApp->KillGameSelector();
+			mApp->PreNewGame(GameMode::GAMEMODE_CHALLENGE_ZEN_GARDEN, false);
+			if (ShouldDoZenTuturialBeforeAdventure())
+				mApp->mZenGarden->SetupForZenTutorial();
+			break;
+	#ifdef _HAS_ZOMBATAR
+		case GameSelector::GameSelector_Zombatar:
+		{
+			if (mApp->mPlayerInfo->mAckZombatarTOS)
+			{
+				ShowZombatarScreen();
+			}
+			else
+			{
+				mApp->ShowZombatarTOS();
+			}
+			break;
+		}
+	#endif
+	#ifdef _HAS_ACHIEVEMENTS
+		case GameSelector::GameSelector_AchievementsBack: // @Patoke: seems to be unused
+			//SlideTo(0, 0);
+			break;
+		case GameSelector::GameSelector_Achievements:
+			mApp->DoDialog(Dialogs::DIALOG_INFO, true, "Achievements Not Available", "Achievements are not enabled when playing on Archipelago", "OK", Dialog::BUTTONS_FOOTER);
+			// ShowAchievementsScreen();
+			break;
+	#endif
+	#ifdef _HAS_MORESCREEN
+		case GameSelector::GameSelector_QuickPlay:
+			ShowMoreScreen();
+			// GameSelector::ShowQuickPlayScreen();
+			break;
+	#endif
+	#ifdef _HAS_UNLOCK
+		case GameSelector::GameSelector_Unlock:
+			if (mApp->mPlayerInfo)
+			{
+				if (mApp->mPlayerInfo->mHasUsedCheatKeys)
+					mApp->DoDialog(Dialogs::DIALOG_ALREADY_UNLOCK, true, _S("[ALREADY_UNLOCKED_DIALOG_HEADER]"), _S("[ALREADY_UNLOCKED_DIALOG_BODY]"), _S("OK"), Dialog::BUTTONS_FOOTER);
+				else
+					mApp->DoDialog(Dialogs::DIALOG_UNLOCK, true, _S("[UNLOCK_DIALOG_HEADER]"), _S("[UNLOCK_DIALOG_BODY]"), _S(""), Dialog::BUTTONS_YES_NO);
+			}
+			break;
+	#endif
+		case GameSelector::GameSelector_Trophy:
+			ClickedTrophy();
+		}
+	};
+	
+	if (theId == GameSelector::GameSelector_Minigame || theId == GameSelector::GameSelector_Puzzle || theId == GameSelector::GameSelector_Survival || theId == GameSelector_Store || theId == GameSelector_ZenGarden || theId == GameSelector_Almanac)
+	{
+		mApp->EnsureArchipelagoConnected(proceed);
+	} else
+	{
+		proceed();
 	}
 }
 

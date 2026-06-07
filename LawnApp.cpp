@@ -848,6 +848,7 @@ LawnApp::LawnApp()
 	mAPUpdateMessage = nullptr;
 	mAPCountdown = nullptr;
 	mConnectingDialog = nullptr;
+	mConnectedCallback = nullptr;
 	
 	SetupArchipelago();
 }
@@ -2029,6 +2030,11 @@ bool LawnApp::KillDialog(int theDialogId)
 		if (mBoard && !NeedPauseGame())
 		{
 			mBoard->Pause(false);
+		}
+		
+		if (theDialogId == Dialogs::DIALOG_ARCHIPELAGO_STATUS)
+		{
+			mConnectedCallback = nullptr;
 		}
 
 		return true;
@@ -5135,22 +5141,16 @@ void LawnApp::ShowAPConnectingDialog()
 	mConnectingDialog = DoDialog(Dialogs::DIALOG_ARCHIPELAGO_CONNECTING, true, "Connecting to Archipelago...", "Please wait for the connection to be established", "Cancel", Dialog::BUTTONS_FOOTER);
 }
 
-bool LawnApp::EnsureArchipelagoConnected()
+void LawnApp::EnsureArchipelagoConnected(std::function<void()> callback)
 {
 	if (mAP->ConnectionStatus() != APWrapper::ConnectionStatus::Connected)
 	{
-		DoDialog(
-			Dialogs::DIALOG_INFO,
-			true,
-			"Archipelago",
-			"Please connect to Archipelago first.",
-			"OK",
-			Dialog::BUTTONS_FOOTER
-		);
-		return false;
+		DoArchipelagoStatusDialog();
+		mConnectedCallback = callback;
+		return;
 	}
-	
-	return true;
+
+	callback();
 }
 
 void LawnApp::DrawArchipelagoOverlayElements(Graphics* g)
@@ -5495,6 +5495,21 @@ void LawnApp::SetupArchipelago()
 	{
 		if (key == this->mAP->DataStorageSlotPrefixed("profileGuids"))
 		{
+			auto resume = [this]
+			{
+				if (mConnectedCallback)
+				{
+					auto callback = mConnectedCallback;
+					KillDialog(Dialogs::DIALOG_ARCHIPELAGO_STATUS);
+					callback();
+				}
+				if (mBoard)
+				{
+					KillDialog(Dialogs::DIALOG_ARCHIPELAGO_STATUS);
+					DoPauseDialog();
+				}
+			};
+			
 			// Switch to the correct profile
 			std::list<std::string> strings = value;
 			auto profiles = this->mProfileMgr->GetProfileMap();
@@ -5515,11 +5530,7 @@ void LawnApp::SetupArchipelago()
 
 					LoadProfile(aProfile);
 					
-					if (mBoard)
-					{
-						KillDialog(Dialogs::DIALOG_ARCHIPELAGO_STATUS);
-						DoPauseDialog();
-					}
+					resume();
 					
 					return;
 				}
@@ -5555,6 +5566,8 @@ void LawnApp::SetupArchipelago()
 
 			// Reset all bonus codes to 0 upon connection to any slot from title screen
 			ResetBonusModes();
+			
+			resume();
 		}
 	});
 }
