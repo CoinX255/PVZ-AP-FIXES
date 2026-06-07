@@ -435,6 +435,7 @@ Board::Board(LawnApp* theApp)
 					{
 						aZombie->ShuffleRow();
 					}
+					break;
 				}
 			case PVZRAPData::Items::MASS_ZOMBIE_FREEZE:
 				{
@@ -461,6 +462,37 @@ Board::Board(LawnApp* theApp)
 							aBossZombie->BossDestroyFireball();
 						}
 					}
+					break;
+				}
+			case PVZRAPData::Items::SUN_BURST:
+				{
+					// Ensure this level has sun
+					if (mApp->IsChallengeWithoutSeedBank() || HasConveyorBeltSeedBank())
+						break;
+
+					if (mApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_ICE || 
+						mApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_BEGHOULED ||
+						mApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_BEGHOULED_TWIST || 
+						mApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_ZOMBIQUARIUM)
+						break;
+
+					if (mApp->IsIZombieLevel() || mApp->IsSlotMachineLevel())
+						break;
+
+					if (mApp->mGameMode >= GameMode::GAMEMODE_LAST_STAND_STAGE_1 && mApp->mGameMode <= GameMode::GAMEMODE_LAST_STAND_STAGE_5)
+						break;
+					
+					// Spawn some random sun
+					auto x = RandRangeInt(100, 650);
+					auto y = RandRangeInt(60, 500);
+					auto count = RandRangeInt(4, 6);
+					
+					for (auto i = 0; i < count; i++)
+					{
+						this->AddCoin(x + RandRangeInt(-10, 10), y + RandRangeInt(-10, 10), COIN_SUN, COIN_MOTION_FROM_PLANT);
+					}
+					
+					break;
 				}
 			}
 		}

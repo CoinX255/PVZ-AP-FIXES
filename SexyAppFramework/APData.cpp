@@ -7,6 +7,7 @@
 #include "APSlotData/SlotData1_5.h"
 #include "APSlotData/SlotData1_6.h"
 #include "APSlotData/SlotData1_7.h"
+#include "APSlotData/SlotData1_8.h"
 
 
 class SlotDataInvalid : public PVZRAPData::SlotData::SlotDataInner
@@ -175,6 +176,11 @@ PVZRAPData::SlotData PVZRAPData::SlotData::get_slot_data(const nlohmann::json& s
     if (gen_version_string == "1.7")
     {
         return SlotData(std::make_shared<SlotData1_7>(slot_data));
+    }
+
+    if (gen_version_string == "1.8")
+    {
+        return SlotData(std::make_shared<SlotData1_8>(slot_data));
     }
 
     return SlotData(std::make_shared<SlotDataInvalid>(gen_version_string));

@@ -157,6 +157,13 @@ namespace PVZRAPData
         constexpr int64_t TRAP_ZOMBIE_AMBUSH = 72;
         constexpr int64_t TRAP_ZOMBIE_SHUFFLE = 73;
         constexpr int64_t ZEN_GARDEN_SPROUT = 74;
+        constexpr int64_t TRAP_RV = 75;
+        constexpr int64_t TRAP_LAWN_FLIP = 76;
+        constexpr int64_t TRAP_LAWN_RANDOMISER = 77;
+        constexpr int64_t TRAP_ZOMBIE_CAFFEINE = 78;
+        constexpr int64_t TRAP_ZOMBIE_HYPNOSIS = 79;
+        constexpr int64_t TRAP_CRATER = 80;
+        constexpr int64_t SUN_BURST = 81;
         
         inline SeedType SeedItem(int64_t item)
         {
