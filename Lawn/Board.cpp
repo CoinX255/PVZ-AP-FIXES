@@ -12565,7 +12565,8 @@ bool Board::CanUseGameObject(GameObjectType theGameObject)
 	}
 	if (theGameObject == GameObjectType::OBJECT_TYPE_MONEY_SIGN)
 	{
-		return mApp->HasFinishedAdventure();
+		// return mApp->HasFinishedAdventure();
+		return true;
 	}
 	if (theGameObject == GameObjectType::OBJECT_TYPE_TREE_FOOD)
 	{
