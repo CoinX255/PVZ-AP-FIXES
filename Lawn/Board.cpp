@@ -551,6 +551,29 @@ Board::Board(LawnApp* theApp)
 					}
 					break;
 				}
+			case PVZRAPData::Items::TRAP_LAWN_FLIP:
+				{
+					if (mApp->mGameMode == GAMEMODE_CHALLENGE_BEGHOULED || mApp->mGameMode == GAMEMODE_CHALLENGE_ZEN_GARDEN || mApp->mGameMode == GAMEMODE_CHALLENGE_BEGHOULED_TWIST)
+					{
+						break;
+					}
+					
+					
+					Plant* aPlant = nullptr;
+					while (IteratePlants(aPlant))
+					{
+						auto targetCol = 8 - aPlant->mPlantCol;
+						if (!(mApp->mSlotData->individual_tile_unlock_items() && mApp->mSlotData->is_eligible_for_individual_tile_unlock_items(mApp->CurrentAPLevelId())) && !mApp->mAP->ReceivedItemCount(PVZRAPData::Items::TileUnlock(aPlant->mRow, targetCol)))
+						{
+							aPlant->mPlantCol = targetCol;
+							aPlant->mX = GridToPixelX(aPlant->mPlantCol, aPlant->mRow);
+							aPlant->mY = GridToPixelY(aPlant->mPlantCol, aPlant->mRow);
+						}
+					}
+					
+					mApp->PlayFoley(FoleyType::FOLEY_FLOOP);
+					break;
+				}
 			}
 		}
 	});
