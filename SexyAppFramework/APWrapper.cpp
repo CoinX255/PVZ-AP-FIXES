@@ -763,9 +763,9 @@ std::list<Hint> APWrapper::Hints()
     return hints;
 }
 
-void APWrapper::HintLocation(int64_t location) const
+void APWrapper::HintLocations(std::list<int64_t> locations) const
 {
-    d->mAP->CreateHints({location}, -1, APClient::HintStatus::HINT_UNSPECIFIED);
+    d->mAP->CreateHints(locations, -1, APClient::HintStatus::HINT_UNSPECIFIED);
 }
 
 void APWrapper::EnableDeathLink(bool enable) const

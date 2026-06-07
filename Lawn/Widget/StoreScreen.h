@@ -136,6 +136,7 @@ public:
     virtual void                OrderInManagerChanged();
 	int ZenPageOffset();
 	int AvailableRestocks();
+	void ScoutPage();
 };
 
 class StoreScreenOverlay : public Widget

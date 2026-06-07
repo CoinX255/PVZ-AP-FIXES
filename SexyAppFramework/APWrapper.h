@@ -138,7 +138,7 @@ public:
     std::string LocationName(const int64_t location, std::string game_name);
     
     std::list<Hint> Hints();
-    void HintLocation(int64_t location) const;
+    void HintLocations(std::list<int64_t> locations) const;
     
     void EnableDeathLink(bool enable) const;
     void SendDeathLink(const std::string& reason) const;

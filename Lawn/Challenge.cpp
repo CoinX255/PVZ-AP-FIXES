@@ -6125,7 +6125,7 @@ void Challenge::TreeOfWisdomGiveWisdom()
 			if (!available_locations.empty())
 			{
 				auto selected_location = available_locations[Rand(static_cast<int>(available_locations.size()))];
-				mApp->mAP->HintLocation(selected_location);
+				mApp->mAP->HintLocations({selected_location});
 				
 				auto item = mApp->mAP->ItemAtLocation(selected_location);
 				

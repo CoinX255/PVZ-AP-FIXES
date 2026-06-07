@@ -281,6 +281,8 @@ StoreScreen::StoreScreen(LawnApp* theApp) : Dialog(nullptr, nullptr, DIALOG_STOR
     {
         EnableButtons(true);
     });
+    
+    ScoutPage();
 }
 
 //0x48A610、0x48A630
@@ -1150,6 +1152,8 @@ void StoreScreen::Update()
                 EnableButtons(true);
                 mShakeX = 0;
                 mShakeY = 0;
+        
+                ScoutPage();
             }
             else
             {
@@ -1322,6 +1326,25 @@ int StoreScreen::AvailableRestocks()
     }
     
     return mApp->mAP->ReceivedItemCount(PVZRAPData::Items::TWIDDYDINKIES_RESTOCK) + 1;
+}
+
+void StoreScreen::ScoutPage()
+{
+    std::list<int64_t> locations;
+    for (int i = 0; i < MAX_PAGE_SPOTS; i++)
+    {
+        auto twiddydinkie = PVZRAPData::Locations::Twiddydinkie(i + (mPage - 1) * 8);
+        if (mApp->mAP->IsLocationPresent(twiddydinkie))
+        {
+            // Scout this item if required
+            locations.push_back(twiddydinkie);
+        }
+    }
+    
+    if (!locations.empty())
+    {
+        mApp->mAP->HintLocations(locations);
+    }
 }
 
 //0x48C3B0
@@ -1728,6 +1751,8 @@ void StoreScreen::AdvanceCrazyDaveDialog()
         mHatchTimer = 150;
         mHatchOpen = true;
         mApp->PlaySample(Sexy::SOUND_HATCHBACK_OPEN);
+        
+        ScoutPage();
     }
     else if (aMessage == 603)
     {
