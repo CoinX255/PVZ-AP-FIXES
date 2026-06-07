@@ -491,7 +491,23 @@ Board::Board(LawnApp* theApp)
 					{
 						this->AddCoin(x + RandRangeInt(-10, 10), y + RandRangeInt(-10, 10), COIN_SUN, COIN_MOTION_FROM_PLANT);
 					}
+					mApp->PlayFoley(FoleyType::FOLEY_THROW);
 					
+					break;
+				}
+			case PVZRAPData::Items::TRAP_ZOMBIE_CAFFEINE:
+				{
+					Zombie* aZombie = nullptr;
+					while (IterateZombies(aZombie))
+					{
+						if (aZombie->mZombieType == ZombieType::ZOMBIE_BOSS)
+						{
+							continue;
+						}
+						aZombie->mVelX *= RandRangeFloat(6, 10);
+						aZombie->UpdateAnimSpeed();
+					}
+					mApp->PlayFoley(FoleyType::FOLEY_WAKEUP);
 					break;
 				}
 			}
