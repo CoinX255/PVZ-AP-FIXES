@@ -518,6 +518,39 @@ Board::Board(LawnApp* theApp)
 					zombie->mFireballRow = 999;
 					break;
 				}
+			case PVZRAPData::Items::TRAP_CRATER:
+				{
+					if (mApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_ZOMBIQUARIUM || mApp->IsIZombieLevel())
+					{
+						break;
+					}
+					
+					std::vector<int> eligibleSpots;
+					for (auto spot = 0; spot < (this->StageHas6Rows() ? 60 : 50); spot++)
+					{
+						auto col = spot % 10;
+						auto row = spot / 10;
+						if (this->CanPlantAt(col, row, SeedType::SEED_FLOWERPOT) == PlantingReason::PLANTING_OK || this->CanPlantAt(col, row, SeedType::SEED_LILYPAD) == PlantingReason::PLANTING_OK)
+						{
+							eligibleSpots.push_back(spot);
+						}
+					}
+					
+					auto cratersToSpawn = min(eligibleSpots.size(), 3);
+					for (auto i = 0; i < cratersToSpawn; i++)
+					{
+						auto spot_idx = Rand((int) eligibleSpots.size());
+						auto spot = eligibleSpots[spot_idx];
+						auto col = spot % 10;
+						auto row = spot / 10;
+						
+						auto crater = this->AddACrater(col, row);
+						crater->mGridItemCounter = 18000;
+						
+						eligibleSpots.erase(eligibleSpots.begin() + spot_idx);
+					}
+					break;
+				}
 			}
 		}
 	});
