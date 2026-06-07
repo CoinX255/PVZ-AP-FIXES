@@ -95,7 +95,7 @@ const int           STORESCREEN_PAGESTRING_Y = 500;
 
 // Unused or Restored
 //#define _HAS_BLOOM_AND_DOOM_CONTENTS
-#define _HAS_EXTENDED_MINIGAMES
+// #define _HAS_EXTENDED_MINIGAMES
 //#define _HAS_UNUSED_ACHIEVEMENTS
 
 //Ported from other editions
