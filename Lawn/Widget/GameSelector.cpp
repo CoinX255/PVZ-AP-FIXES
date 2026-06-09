@@ -2048,12 +2048,12 @@ void GameSelector::ButtonDepress(int theId)
 			mApp->LawnMessageBox(Dialogs::DIALOG_MESSAGE, _S("[MODE_LOCKED]"), _S("Obtain Crazy Dave's Car Keys or Progressive Twiddydinkies to access the shop."), _S("[DIALOG_BUTTON_OK]"), _S(""), Dialog::BUTTONS_FOOTER);
 			return;
 		}
-		if (theId == GameSelector::GameSelector_Store && !mApp->CanShowAlmanac())
+		if (theId == GameSelector::GameSelector_Almanac && !mApp->CanShowAlmanac())
 		{
 			mApp->LawnMessageBox(Dialogs::DIALOG_MESSAGE, _S("[MODE_LOCKED]"), _S("Obtain the Suburban Almanac from Archipelago to access the Almanac."), _S("[DIALOG_BUTTON_OK]"), _S(""), Dialog::BUTTONS_FOOTER);
 			return;
 		}
-		if (theId == GameSelector::GameSelector_Store && !mApp->CanShowZenGarden())
+		if (theId == GameSelector::GameSelector_ZenGarden && !mApp->CanShowZenGarden())
 		{
 			mApp->LawnMessageBox(Dialogs::DIALOG_MESSAGE, _S("[MODE_LOCKED]"), _S("Obtain the Zen Garden from Archipelago to access the Zen Garden."), _S("[DIALOG_BUTTON_OK]"), _S(""), Dialog::BUTTONS_FOOTER);
 			return;
