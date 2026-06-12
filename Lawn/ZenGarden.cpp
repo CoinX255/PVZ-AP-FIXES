@@ -333,7 +333,7 @@ bool ZenGarden::CanDropPottedPlantLoot()
 }
 
 //0x51D7B0
-void ZenGarden::FindOpenZenGardenSpot(int& theSpotX, int& theSpotY)
+bool ZenGarden::FindOpenZenGardenSpot(int& theSpotX, int& theSpotY)
 {
     TodWeightedGridArray aPicks[ZEN_MAX_GRIDSIZE_X * ZEN_MAX_GRIDSIZE_Y];
     int aPickCount = 0;
@@ -369,9 +369,15 @@ void ZenGarden::FindOpenZenGardenSpot(int& theSpotX, int& theSpotY)
         }
     }
 
+    if (aPickCount == 0) {
+        return false;
+    }
+
     TodWeightedGridArray* aSpot = TodPickFromWeightedGridArray(aPicks, aPickCount);
     theSpotX = aSpot->mX;
     theSpotY = aSpot->mY;
+
+    return true;
 }
 
 //0x51D8C0
@@ -384,7 +390,11 @@ void ZenGarden::AddPottedPlant(PottedPlant* thePottedPlant)
     *aPottedPlant = *thePottedPlant;
     aPottedPlant->mWhichZenGarden = GardenType::GARDEN_MAIN;
     aPottedPlant->mLastWateredTime = 0i64;
-    FindOpenZenGardenSpot(aPottedPlant->mX, aPottedPlant->mY);
+    auto haveOpenSpot = FindOpenZenGardenSpot(aPottedPlant->mX, aPottedPlant->mY);
+    if (!haveOpenSpot) {
+        return;
+    }
+
     mApp->mPlayerInfo->mNumPottedPlants++;
 
     if (mApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_ZEN_GARDEN && mBoard && aPottedPlant->mWhichZenGarden == mGardenType)

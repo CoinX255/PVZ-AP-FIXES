@@ -43,7 +43,7 @@ public:
     /*inline*/ void         DrawPottedPlantIcon(Graphics* g, float x, float y, PottedPlant* thePottedPlant);
     void                    DrawPottedPlant(Graphics* g, float x, float y, PottedPlant* thePottedPlant, float theScale, bool theDrawPot);
     bool                    IsZenGardenFull(bool theIncludeDroppedPresents);
-    void                    FindOpenZenGardenSpot(int& theSpotX, int& theSpotY);
+    bool FindOpenZenGardenSpot(int& theSpotX, int& theSpotY);
     void                    AddPottedPlant(PottedPlant* thePottedPlant);
     void                    MouseDownWithTool(int x, int y, CursorType theCursorType);
     void                    MovePlant(Plant* thePlant, int theGridX, int theGridY);
