@@ -56,7 +56,7 @@ public:
             return {};
         }
         
-        auto available_plants_for_level = conveyor_map["default"];
+        auto available_plants_for_level = level_data["default"];
         
         std::vector<SeedType> result;
         for (const auto& plant_id : available_plants_for_level)
