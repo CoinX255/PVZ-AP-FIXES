@@ -6,6 +6,7 @@
 #include "../Resources.h"
 #include "../Sexy.TodLib/Reanimator.h"
 #include "../SexyAppFramework/WidgetManager.h"
+#include "../SexyAppFramework/APWrapper.h"
 
 //0x438640
 CursorObject::CursorObject()
@@ -81,7 +82,7 @@ void CursorObject::Draw(Graphics* g)
         break;
 
     case CursorType::CURSOR_TYPE_WATERING_CAN:
-        if (mApp->mPlayerInfo->mPurchases[(int)StoreItem::STORE_ITEM_GOLD_WATERINGCAN])
+        if (mApp->mAP->ReceivedItemCount(PVZRAPData::Items::GOLD_WATERING_CAN) > 0)
         {
             g->DrawImage(IMAGE_ZEN_GOLDTOOLRETICLE, -62, -37);
             g->DrawImage(IMAGE_WATERINGCANGOLD, -3, 12);

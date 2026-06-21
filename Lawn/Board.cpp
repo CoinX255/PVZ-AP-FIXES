@@ -4160,7 +4160,7 @@ bool Board::IsPlantInGoldWateringCanRange(int theMouseX, int theMouseY, Plant* t
 //0x40E940
 void Board::HighlightPlantsForMouse(int theMouseX, int theMouseY)
 {
-	if (mCursorObject->mCursorType == CursorType::CURSOR_TYPE_WATERING_CAN && mApp->mPlayerInfo->mPurchases[(int)StoreItem::STORE_ITEM_GOLD_WATERINGCAN])
+	if (mCursorObject->mCursorType == CursorType::CURSOR_TYPE_WATERING_CAN && (mApp->mAP->ReceivedItemCount(PVZRAPData::Items::GOLD_WATERING_CAN) > 0))
 	{
 		Plant* aPlant = nullptr;
 		while (IteratePlants(aPlant))
@@ -8554,7 +8554,7 @@ void Board::DrawZenButtons(Graphics* g)
 
 			if (aTool == GameObjectType::OBJECT_TYPE_WATERING_CAN)
 			{
-				if (mApp->mPlayerInfo->mPurchases[(int)StoreItem::STORE_ITEM_GOLD_WATERINGCAN])
+				if (mApp->mAP->ReceivedItemCount(PVZRAPData::Items::GOLD_WATERING_CAN) > 0)
 				{
 					g->DrawImage(Sexy::IMAGE_WATERINGCANGOLD, aButtonRect.mX - 2, aButtonRect.mY + aOffsetY - 6);
 				}
