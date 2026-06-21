@@ -8806,18 +8806,23 @@ void Zombie::DropLoot()
     if (shouldSpawnFlagReward)
     {
         mBoard->mFlagAwardSpawned[wave] = true;
-        
-        // Find out which flag location we need
-        int64_t absoluteWave = mApp->IsSurvivalMode()
-            ? static_cast<int64_t>(mBoard->mChallenge->mSurvivalStage) * mBoard->GetNumWavesPerSurvivalStage() + wave
-            : static_cast<int64_t>(wave);
-        int64_t location = PVZRAPData::Locations::Wave(mApp->CurrentAPLevelId(), absoluteWave);
+        auto waves = mBoard->WavesToSpawn(wave);
 
-        if (location != -1)
-        {
-            if (!mApp->mAP->IsLocationChecked(location) && mApp->mAP->IsLocationPresent(location))
+        auto check = 0;
+        for (auto wave : waves) {
+            // Find out which flag location we need
+            int64_t absoluteWave = mApp->IsSurvivalMode()
+                ? static_cast<int64_t>(mBoard->mChallenge->mSurvivalStage) * mBoard->GetNumWavesPerSurvivalStage() + wave
+                : static_cast<int64_t>(wave);
+            int64_t location = PVZRAPData::Locations::Wave(mApp->CurrentAPLevelId(), absoluteWave);
+
+            if (location != -1)
             {
-                mBoard->AddCoin(aCenterX, aCenterY, CoinType::COIN_FLAG_SEED_PACKET, CoinMotion::COIN_MOTION_COIN, location);
+                if (!mApp->mAP->IsLocationChecked(location) && mApp->mAP->IsLocationPresent(location))
+                {
+                    mBoard->AddCoin(aCenterX + check * 10, aCenterY + check * 10, CoinType::COIN_FLAG_SEED_PACKET, CoinMotion::COIN_MOTION_COIN, location);
+                    check++;
+                }
             }
         }
     }

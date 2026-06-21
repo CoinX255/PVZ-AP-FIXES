@@ -214,6 +214,7 @@ public:
 	int								mNextSurvivalStageCounter;								//+0x5604
 	int								mScoreNextMowerCounter;									//+0x5608
 	bool							mFlagAwardSpawned[200];										
+	bool                            mFlagAwardSkipped[200];
 	bool							mLevelAwardSpawned;										//+0x560C
 	int								mProgressMeterWidth;									//+0x5610
 	int								mFlagRaiseCounter;										//+0x5614
@@ -553,6 +554,8 @@ public:
 	void							DrawForeGround(Graphics* g);
 	
 	SeedType						RandomSeed(bool isTrap = false, bool forceAquatic = false);
+
+	std::vector<int64_t>			WavesToSpawn(int wave);
 
 #ifdef _REPLANTED_SPEED_CONTROL
 	float							GetSpeedValue(SpeedMod theMod);

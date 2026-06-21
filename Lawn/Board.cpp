@@ -114,6 +114,7 @@ Board::Board(LawnApp* theApp)
 	mDrawOnlyCamera = true;
 	mPaused = false;
 	ranges::fill(mFlagAwardSpawned, false);
+	ranges::fill(mFlagAwardSkipped, false);
 	mLevelAwardSpawned = false;
 	mFlagRaiseCounter = 0;
 	mIceTrapCounter = 0;
@@ -1849,6 +1850,7 @@ void Board::InitZombieWaves()
 	mProgressMeterWidth = 0;
 	mHugeWaveCountDown = 0;
 	ranges::fill(mFlagAwardSpawned, false);
+	ranges::fill(mFlagAwardSkipped, false);
 	mLevelAwardSpawned = false;
 	mZombieCountDownStart = mZombieCountDown;
 	mZombieHealthToNextWave = -1;
@@ -6186,6 +6188,7 @@ int Board::TotalZombiesHealthInWave(int theWaveIndex)
 //0x412EE0
 void Board::SpawnZombieWave()
 {
+	bool spawnedZombie = false;
 	mChallenge->SpawnZombieWave();
 	if (mApp->IsBungeeBlitzLevel())
 	{
@@ -6205,6 +6208,7 @@ void Board::SpawnZombieWave()
 			{
 				BungeeDropZombie(&aBungeeDropGrid, aZombieType);
 			}
+			spawnedZombie = true;
 		}
 	}
 	else
@@ -6232,6 +6236,7 @@ void Board::SpawnZombieWave()
 			{
 				aZombie = AddZombie(aZombieType, mCurrentWave);
 			}
+			spawnedZombie = true;
 
 			if (aZombie && mApp->mGameMode != GameMode::GAMEMODE_CHALLENGE_INVISIGHOUL)
 			{
@@ -6262,6 +6267,10 @@ void Board::SpawnZombieWave()
 	if (IsFlagWave(mCurrentWave))
 	{
 		mFlagRaiseCounter = FLAG_RAISE_TIME;
+	}
+	if (!spawnedZombie) {
+		// We need to queue up this wave to drop along with the next wave with zombies
+		mFlagAwardSkipped[mCurrentWave] = true;
 	}
 	mCurrentWave++;
 	mTotalSpawnedWaves++;
@@ -9557,6 +9566,19 @@ SeedType Board::RandomSeed(bool isTrap, bool forceAquatic)
 	}
 
 	return freeSeedTypes[Rand(static_cast<int>(freeSeedTypes.size()))];
+}
+
+std::vector<int64_t> Board::WavesToSpawn(int wave)
+{
+	std::vector<int64_t> waves = { wave };
+	for (auto w = 0; w < wave; w++) {
+		if (!mFlagAwardSpawned[w] && mFlagAwardSkipped[w]) {
+			waves.push_back(w);
+			mFlagAwardSpawned[w] = true;
+		}
+	}
+
+	return waves;
 }
 
 //0x41AA00
