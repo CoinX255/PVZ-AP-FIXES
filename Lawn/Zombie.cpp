@@ -8983,6 +8983,54 @@ void Zombie::DieNoLoot()
         BossDie();
     }
 
+    if (mBoard) {
+        Rect aZombieRect = GetZombieRect();
+        int aCenterX = aZombieRect.mX + aZombieRect.mWidth / 2;
+        int aCenterY = aZombieRect.mY + aZombieRect.mHeight / 4;
+
+        bool shouldSpawnFlagReward = true;
+
+        auto wave = mFromWave;
+        if (mBoard->mFlagAwardSpawned[wave])
+        {
+            shouldSpawnFlagReward = false;
+        }
+
+        // Are we the last zombie?
+        Zombie* aZombie = nullptr;
+        while (mBoard->IterateZombies(aZombie))
+        {
+            if (aZombie->mZombieType == ZombieType::ZOMBIE_BOSS && !aZombie->IsDeadOrDying() && aZombie->mFromWave == mFromWave && !aZombie->mMindControlled) {
+                shouldSpawnFlagReward = false;
+                break;
+            }
+        }
+
+        if (shouldSpawnFlagReward)
+        {
+            mBoard->mFlagAwardSpawned[wave] = true;
+            auto waves = mBoard->WavesToSpawn(wave);
+
+            auto check = 0;
+            for (auto wave : waves) {
+                // Find out which flag location we need
+                int64_t absoluteWave = mApp->IsSurvivalMode()
+                    ? static_cast<int64_t>(mBoard->mChallenge->mSurvivalStage) * mBoard->GetNumWavesPerSurvivalStage() + wave
+                    : static_cast<int64_t>(wave);
+                int64_t location = PVZRAPData::Locations::Wave(mApp->CurrentAPLevelId(), absoluteWave);
+
+                if (location != -1)
+                {
+                    if (!mApp->mAP->IsLocationChecked(location) && mApp->mAP->IsLocationPresent(location))
+                    {
+                        mBoard->AddCoin(aCenterX + check * 10, aCenterY + check * 10, CoinType::COIN_FLAG_SEED_PACKET, CoinMotion::COIN_MOTION_COIN, location);
+                        check++;
+                    }
+                }
+            }
+        }
+    }
+
 #ifdef _HAS_BLOOM_AND_DOOM_CONTENTS
     if (!IsOnBoard() && mZombieType == ZombieType::ZOMBIE_DOG_WALKER) 
     {
