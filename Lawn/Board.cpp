@@ -4046,7 +4046,9 @@ PlantingReason Board::CanPlantAt(int theGridX, int theGridY, SeedType theSeedTyp
 	{
 		if (theSeedType == SeedType::SEED_COBCANNON)
 		{
-			result = PlantingReason::PLANTING_OK;
+			if (result != PlantingReason::PLANTING_OK) {
+				return result;
+			}
 			
 			PlantsOnLawn plantOnLawnX, plantOnLawnX1;
 			GetPlantsOnLawn(theGridX, theGridY, &plantOnLawnX);
