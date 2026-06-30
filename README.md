@@ -19,15 +19,15 @@ For the client, you have two choices how you obtain it:
 
 The following steps are the same, no matter what you choose in the last step:
 - Download the zip file appropriate to your system (32 bit: Win32, 64 bit: x64) to your chosen directory
-- Unzip the contents to the choosen directory.
-- On first launch the mod will ask for your PvZ install.
-  - Alternatively if the automatic detection fails:  Copy the `main.pak` file and `properties` folder from your PvZ install into the folder with the rest of the unzipped mod files.
+- Extract the contents to a directory of your choice.
+  - **Do not replace the files from your original PvZ: GOTY install.** This mod is a completely seperate version, and will not overwrite any data from your installed copy of PvZ: GOTY.
+  - If you are updating the mod, you should overwrite the old files from the mod with the new files.
 - Now open `PlantsVsZombies.exe` to launch the Archipelago Mod!
-
-**To update the mod**, simply download the latest version and overwrite the old files with the new ones.
+  - If the mod cannot find your PvZ install, it will ask for it. Find the `main.pak` file from your original copy of Plants vs. Zombies: Game of the Year edition.
+  - If you want to use the assets from a specific copy of PvZ, copy the `main.pak` file and `properties` folder from your PvZ install into the folder with the rest of the unzipped mod files.
 
 # Playing the Randomizer
-- After launching the game you'll be prompted to enter your multiworld information.
+- After launching the game and choosing to start Adventure mode, you'll be prompted to enter your multiworld information.
 - If you would like to continue at a later point, simply just reconnect to the room you previously played.
 
 # Troubleshooting
