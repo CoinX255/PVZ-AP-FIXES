@@ -3248,6 +3248,11 @@ void LawnApp::ButtonDepress(int theId)
 		//	}
 		//	return;
 		//}
+			
+		case Dialogs::DIALOG_ARCHIPELAGO_UNCOMPLETABLE:
+			KillDialog(Dialogs::DIALOG_ARCHIPELAGO_UNCOMPLETABLE);
+			ResumeEnsureArchipelagoConnected();
+			break;
 
 		default:
 			KillDialog(theId - 2000);
@@ -3296,6 +3301,11 @@ void LawnApp::ButtonDepress(int theId)
 			KillDialog(10008);
 			KillDialog(Dialogs::DIALOG_CHECKING_UPDATES);
 			return;
+			
+		case Dialogs::DIALOG_ARCHIPELAGO_UNCOMPLETABLE:
+			KillDialog(Dialogs::DIALOG_ARCHIPELAGO_UNCOMPLETABLE);
+			mAP->Disconnect();
+			break;
 
 		default:
 			KillDialog(theId - 3000);
@@ -5508,16 +5518,14 @@ void LawnApp::SetupArchipelago()
 		{
 			auto resume = [this]
 			{
-				if (mConnectedCallback)
+				if (this->mSlotData->requires_replanted())
 				{
-					auto callback = mConnectedCallback;
-					KillDialog(Dialogs::DIALOG_ARCHIPELAGO_STATUS);
-					callback();
+					auto dialog = static_cast<LawnDialog*>(this->DoDialog(Dialogs::DIALOG_ARCHIPELAGO_UNCOMPLETABLE, true, "The goal cannot be reached in this world", "This world contains checks only obtainable in Plants vs. Zombies: Replanted. You can continue playing this world, but you will not be able to goal.\n\nTo ensure that your world can be completed without requiring the use of Plants vs. Zombies: Replanted, you need to regenerate the world, setting the GOTY Compatibility option in your YAML.", "OK", Dialog::BUTTONS_OK_CANCEL));
+					dialog->mLawnYesButton->mLabel = "Stay connected anyway";
 				}
-				if (mBoard)
+				else
 				{
-					KillDialog(Dialogs::DIALOG_ARCHIPELAGO_STATUS);
-					DoPauseDialog();
+					this->ResumeEnsureArchipelagoConnected();
 				}
 			};
 			
@@ -5721,4 +5729,19 @@ void LawnApp::DisplayAPUpdate(const std::string& message)
 		this->mAPUpdateMessage = new MessageWidget(this, true);
 	}
 	mAPPendingUpdates.push(message);
+}
+
+void LawnApp::ResumeEnsureArchipelagoConnected()
+{
+	if (mConnectedCallback)
+	{
+		auto callback = mConnectedCallback;
+		KillDialog(Dialogs::DIALOG_ARCHIPELAGO_STATUS);
+		callback();
+	}
+	if (mBoard)
+	{
+		KillDialog(Dialogs::DIALOG_ARCHIPELAGO_STATUS);
+		DoPauseDialog();
+	}
 }

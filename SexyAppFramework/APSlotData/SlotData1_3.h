@@ -21,6 +21,12 @@ public:
         return "1.3";
     }
     
+    bool requires_replanted() override
+    {
+        // Not supported in 1.3
+        return false;
+    }
+    
     PVZRAPData::SlotData::AdventureModeProgression adventure_mode_progression() override
     {
         return parse_adventure_mode_progression(slot_data["adventure_mode_progression"].get<int>());

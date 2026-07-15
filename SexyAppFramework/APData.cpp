@@ -3,11 +3,9 @@
 #include <nlohmann/json.hpp>
 
 #include "APSlotData/SlotData1_3.h"
-#include "APSlotData/SlotData1_4.h"
-#include "APSlotData/SlotData1_5.h"
-#include "APSlotData/SlotData1_6.h"
 #include "APSlotData/SlotData1_7.h"
 #include "APSlotData/SlotData1_8.h"
+#include "APSlotData/SlotData1_9.h"
 
 
 class SlotDataInvalid : public PVZRAPData::SlotData::SlotDataInner
@@ -24,6 +22,11 @@ public:
     std::string version() override
     {
         return _version;
+    }
+    
+    bool requires_replanted() override
+    {
+        return {};
     }
 
     PVZRAPData::SlotData::AdventureModeProgression adventure_mode_progression() override
@@ -183,6 +186,11 @@ PVZRAPData::SlotData PVZRAPData::SlotData::get_slot_data(const nlohmann::json& s
         return SlotData(std::make_shared<SlotData1_8>(slot_data));
     }
 
+    if (gen_version_string == "1.9")
+    {
+        return SlotData(std::make_shared<SlotData1_9>(slot_data));
+    }
+
     return SlotData(std::make_shared<SlotDataInvalid>(gen_version_string));
 }
 
@@ -194,6 +202,11 @@ bool PVZRAPData::SlotData::is_valid() const
 std::string PVZRAPData::SlotData::version() const
 {
     return inner->version();
+}
+
+bool PVZRAPData::SlotData::requires_replanted() const
+{
+    return inner->requires_replanted();
 }
 
 PVZRAPData::SlotData::AdventureModeProgression PVZRAPData::SlotData::adventure_mode_progression() const

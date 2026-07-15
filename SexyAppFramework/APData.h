@@ -281,6 +281,7 @@ namespace PVZRAPData
         
         bool is_valid() const;
         std::string version() const;
+        bool requires_replanted() const;
         
         AdventureModeProgression adventure_mode_progression() const;
         

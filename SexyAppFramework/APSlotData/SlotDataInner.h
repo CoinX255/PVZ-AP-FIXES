@@ -8,6 +8,7 @@ public:
     
     virtual bool is_valid() = 0;
     virtual std::string version() = 0;
+    virtual bool requires_replanted() = 0;
     
     virtual AdventureModeProgression adventure_mode_progression() = 0;
     

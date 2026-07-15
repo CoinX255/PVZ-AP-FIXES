@@ -431,6 +431,7 @@ private:
 	void							SetupArchipelago();
 	void							ProcessAPItem(const APItem& item);
 	void							DisplayAPUpdate(const std::string& message);
+	void							ResumeEnsureArchipelagoConnected();
 };
 
 SexyString							LawnGetCurrentLevelName();
