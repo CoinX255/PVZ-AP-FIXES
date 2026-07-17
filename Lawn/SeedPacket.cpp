@@ -966,6 +966,11 @@ void SeedPacket::WasPlanted()
 		mRefreshing = true;
 		mRefreshTime = Plant::GetRefreshTime(mApp, mPacketType, mImitaterType);
 	}
+	
+	if (mBoard->SeedLinkEligible())
+	{
+		mApp->mAP->SendSeedLink(mPacketType);
+	}
 }
 
 //0x488F90

@@ -5438,6 +5438,7 @@ void LawnApp::SetupArchipelago()
 		this->KillDialog(Dialogs::DIALOG_ARCHIPELAGO_CONNECTING);
 		mAP->EnableDeathLink(this->mAP->SlotData()["deathlink_enabled"] == 1);
 		mAP->EnableRingLink(this->mAP->SlotData()["ringlink_enabled"] == 1);
+		mAP->EnableSeedLink(this->mAP->SlotData()["seedlink_enabled"] == 1);
 		this->mSlotData = std::make_shared<PVZRAPData::SlotData>(PVZRAPData::SlotData::get_slot_data(mAP->SlotData()));
 	});
 	this->mAP->AddSlotRefusedListener([this](const std::string& reason)

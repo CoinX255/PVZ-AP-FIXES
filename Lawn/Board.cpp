@@ -322,6 +322,7 @@ Board::Board(LawnApp* theApp)
 						auto seed_packet = &mSeedBank->mSeedPackets[i];
 						if (seed_packet->mPacketType != SeedType::SEED_NONE)
 						{
+							seed_packet->mActive = false;
 							seed_packet->mRefreshing = true;
 							seed_packet->mRefreshTime = Plant::GetRefreshTime(mApp, seed_packet->mPacketType, seed_packet->mImitaterType);
 						}
@@ -554,6 +555,24 @@ Board::Board(LawnApp* theApp)
 			this->TakeSunMoney(-amount);
 		}
 	});
+	mAPSeedLinkListener = mApp->mAP->AddSeedLinkListener([this](int seed)
+	{
+		if (!this->SeedLinkEligible())
+		{
+			return;
+		}
+		
+		for (int i = 0; i < SEEDBANK_MAX; i++)
+		{
+			auto seed_packet = &mSeedBank->mSeedPackets[i];
+			if (seed_packet->mPacketType == seed)
+			{
+				seed_packet->mActive = false;
+				seed_packet->mRefreshing = true;
+				seed_packet->mRefreshTime = Plant::GetRefreshTime(mApp, seed_packet->mPacketType, seed_packet->mImitaterType);
+			}
+		}
+	});
 }
 
 //0x408670、0x408690
@@ -562,6 +581,7 @@ Board::~Board()
 	delete mItemReceivedListener;
 	delete mAPDisconnectListener;
 	delete mAPRingLinkListener;
+	delete mAPSeedLinkListener;
 	delete mAdvice;
 	delete mCursorObject;
 	delete mCursorPreview;
@@ -9491,6 +9511,11 @@ SeedType Board::RandomSeed(bool isTrap, bool forceAquatic)
 	}
 
 	return freeSeedTypes[Rand(static_cast<int>(freeSeedTypes.size()))];
+}
+
+bool Board::SeedLinkEligible()
+{
+	return mApp->mSlotData->seedlink_enabled() && mApp->mGameScene == GameScenes::SCENE_PLAYING && !HasConveyorBeltSeedBank() && !mApp->IsSlotMachineLevel() && !(mApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_LAST_STAND && mChallenge->mChallengeState != ChallengeState::STATECHALLENGE_LAST_STAND_ONSLAUGHT);
 }
 
 std::vector<int64_t> Board::WavesToSpawn(int wave)

@@ -127,6 +127,7 @@ public:
 	ListenerHandle*                 mItemReceivedListener;
 	ListenerHandle*                 mAPDisconnectListener;
 	ListenerHandle*                 mAPRingLinkListener;
+	ListenerHandle*                 mAPSeedLinkListener;
 	DataArray<Zombie>				mZombies;												//+0x90
 	DataArray<Plant>				mPlants;												//+0xAC
 	DataArray<Projectile>			mProjectiles;											//+0xC8
@@ -555,6 +556,7 @@ public:
 	void							DrawForeGround(Graphics* g);
 	
 	SeedType						RandomSeed(bool isTrap = false, bool forceAquatic = false);
+	bool                            SeedLinkEligible();
 
 	std::vector<int64_t>			WavesToSpawn(int wave);
 

@@ -22,6 +22,7 @@ public:
     std::map<uint64_t, std::function<void(const std::string&)>> slot_refused_listeners;
     std::map<uint64_t, std::function<void(const std::string&, const std::string&)>> deathlink_listeners;
     std::map<uint64_t, std::function<void(const long&)>> ringlink_listeners;
+    std::map<uint64_t, std::function<void(const int&)>> seedlink_listeners;
     std::map<uint64_t, std::function<void(const std::string&)>> any_chat_listeners;
     std::map<uint64_t, std::function<void(const std::string&, const nlohmann::json&)>> data_storage_value_change_listeners;
     
@@ -429,6 +430,36 @@ void APWrapper::Connect(const std::string& server_name, const std::string& slot_
                     for (const auto& ringlink_listener : this->d->ringlink_listeners)
                     {
                         ringlink_listener.second(amount);
+                    }
+                }
+            }
+            
+            if (tags[0] == "SeedLink")
+            {
+                // Handle SeedLink packet
+                auto data = bounce_data["data"];
+                auto source_json = data["source"];
+                auto team_json = data["team"];
+                auto seed_json = data["seed"];
+                
+                if (team_json.is_number() && team_json.get<int>() != d->mAP->get_team_number())
+                {
+                    return;
+                }
+                
+                if (!source_json.is_number_integer() || !seed_json.is_number_integer())
+                {
+                    return;
+                }
+                
+                auto source = source_json.get<long>();
+                auto seed = seed_json.get<int>();
+                
+                if (source != d->mAP->get_player_number())
+                {
+                    for (const auto& seedlink_listener : this->d->seedlink_listeners)
+                    {
+                        seedlink_listener.second(seed);
                     }
                 }
             }
@@ -855,6 +886,42 @@ void APWrapper::SendRingLink(long delta) const
     }
 }
 
+void APWrapper::EnableSeedLink(bool enable) const
+{
+    if (!enable)
+    {
+        d->tags.remove_if([](std::string tag)
+        {
+            return tag == "SeedLink";
+        });
+    }
+    else
+    {
+        d->tags.emplace_back("SeedLink");
+    }
+    
+    this->UpdateConnectionInformation();
+}
+
+void APWrapper::SendSeedLink(int seed) const
+{
+    // Ensure SeedLink is on
+    for (const auto& tag : d->tags)
+    {
+        if (tag == "SeedLink")
+        {
+            auto time = d->mAP->get_server_time();
+            d->mAP->Bounce({
+                {"time", time},
+                {"source", d->mAP->get_player_number()},
+                {"team", d->mAP->get_team_number()},
+                {"seed", seed}
+            }, {}, {}, {"SeedLink"});
+            return;
+        }
+    }
+}
+
 std::list<std::string> APWrapper::ChatMessages() const
 {
     return d->chat_messages;
@@ -930,6 +997,14 @@ ListenerHandle* APWrapper::AddRingLinkListener(std::function<void(const long&)> 
     this->d->ringlink_listeners.insert_or_assign(id, listener);
     
     return new ListenerHandle([this, id] { this->d->ringlink_listeners.erase(id); });
+}
+
+ListenerHandle* APWrapper::AddSeedLinkListener(std::function<void(const int&)> listener) const
+{
+    auto id = d->next_listener_id++;
+    this->d->seedlink_listeners.insert_or_assign(id, listener);
+    
+    return new ListenerHandle([this, id] { this->d->seedlink_listeners.erase(id); });
 }
 
 ListenerHandle* APWrapper::AddAnyChatMessageListener(std::function<void(const std::string&)> listener) const

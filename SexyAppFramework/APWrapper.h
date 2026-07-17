@@ -149,6 +149,9 @@ public:
     void EnableRingLink(bool enable) const;
     void SendRingLink(long delta) const;
     
+    void EnableSeedLink(bool enable) const;
+    void SendSeedLink(int seed) const;
+    
     std::list<std::string> ChatMessages() const;
     void SendAPMessage(const std::string& message) const;
     void PushMessageHistory(const std::string& message) const;
@@ -169,6 +172,7 @@ public:
     ListenerHandle* AddDisconnectionListener(std::function<void()>) const;
     ListenerHandle* AddDeathLinkListener(std::function<void(const std::string&, const std::string&)>) const;
     ListenerHandle* AddRingLinkListener(std::function<void(const long&)>) const;
+    ListenerHandle* AddSeedLinkListener(std::function<void(const int&)>) const;
     ListenerHandle* AddAnyChatMessageListener(std::function<void(const std::string&)>) const;
     ListenerHandle* AddDataStorageValueChangeListener(std::function<void(const std::string&, const nlohmann::json&)>) const;
 
