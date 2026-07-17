@@ -4771,8 +4771,19 @@ void Challenge::ScaryPotterOpenPot(GridItem* theScaryPot)
 	switch (theScaryPot->mScaryPotType)
 	{
 	case SCARYPOT_SEED:
-		mBoard->AddCoin(aXPos + 20, aYPos, COIN_USABLE_SEED_PACKET, COIN_MOTION_FROM_PLANT)->mUsableSeedType = theScaryPot->mSeedType;
-		break;
+		{
+			
+			if (mApp->mSlotData->lock_vasebreaker() && mApp->mAP->ReceivedItemCount(PVZRAPData::Items::Seed(theScaryPot->mSeedType)) == 0)
+			{
+				// You get an empty pot if you haven't unlocked this plant
+			}
+			else
+			{
+				mBoard->AddCoin(aXPos + 20, aYPos, COIN_USABLE_SEED_PACKET, COIN_MOTION_FROM_PLANT)->mUsableSeedType = theScaryPot->mSeedType;
+			}
+			
+			break;
+		}
 	case SCARYPOT_ZOMBIE:
 		mBoard->AddZombieInRow(theScaryPot->mZombieType, theScaryPot->mGridY, 0)->mPosX = aXPos;
 		break;
