@@ -8,6 +8,7 @@
 #include "MessageWidget.h"
 #include "../SexyAppFramework/Font.h"
 #include "../Sexy.TodLib/FilterEffect.h"
+#include "../SexyAppFramework/APWrapper.h"
 #include "../SexyAppFramework/SexyMatrix.h"
 
 SeedPacket::SeedPacket()
@@ -1097,6 +1098,12 @@ void SeedBank::AddSeed(SeedType theSeedType, bool thePlaceOnLeft)
 {
 	TOD_ASSERT(mBoard->HasConveyorBeltSeedBank());
 	TOD_ASSERT(theSeedType != SeedType::SEED_NONE);
+	
+	if (mApp->mSlotData->lock_conveyor() && mApp->mAP->ReceivedItemCount(PVZRAPData::Items::Seed(theSeedType)) == 0)
+	{
+		// Don't give a seed that is not yet unlocked
+		return;
+	}
 
 	int aNumSeeds = GetNumSeedsOnConveyorBelt();
 	if (aNumSeeds == mNumPackets)

@@ -92,6 +92,9 @@ namespace PVZRAPData
         {
             switch (seed)
             {
+            case SEED_EXPLODE_O_NUT: return 82;
+            case SEED_GIANT_WALLNUT: return 83;
+            case SEED_LEFTPEATER: return 84;
             case SEED_ZOMBIE_NORMAL: return 85;
             case SEED_ZOMBIE_TRAFFIC_CONE: return 86;
             case SEED_ZOMBIE_PAIL: return 87;
@@ -183,14 +186,13 @@ namespace PVZRAPData
         constexpr int64_t TRAP_CRATER = 80;
         constexpr int64_t SUN_BURST = 81;
         
-        constexpr int64_t EXPLODE_O_NUT = 82;
-        constexpr int64_t GIANT_WALL_NUT = 83;
-        constexpr int64_t BACKWARDS_REPEATER = 84;
-        
         inline SeedType SeedItem(int64_t item)
         {
             switch (item)
             {
+            case 82: return SEED_EXPLODE_O_NUT;
+            case 83: return SEED_GIANT_WALLNUT;
+            case 84: return SEED_LEFTPEATER;
             case 85: return SEED_ZOMBIE_NORMAL;
             case 86: return SEED_ZOMBIE_TRAFFIC_CONE;
             case 87: return SEED_ZOMBIE_PAIL;
