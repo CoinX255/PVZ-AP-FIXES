@@ -2101,35 +2101,21 @@ void Challenge::UpdateConveyorBelt()
 			}
 		}
 	}
-	
-	if (mApp->mSlotData->lock_conveyor())
-	{
-		// Only allow seeds that have been unlocked
-		bool all_zeroed = true;
-		for (auto i = 0; i < aSeedPickCount; i++)
-		{
-			TodWeightedArray& aSeedPick = aSeedPickArray[i];
-			if (mApp->mAP->ReceivedItemCount(PVZRAPData::Items::Seed(static_cast<SeedType>(aSeedPick.mItem))) == 0)
-			{
-				aSeedPick.mWeight = 0;
-			}
-			else
-			{
-				all_zeroed = false;
-			}
-		}
-		
-		if (all_zeroed)
-		{
-			// Don't spawn anything on the conveyor belt because we don't have anything to spawn (too bad!)
-			return;
-		}
-	}
 
 	if (aSeedPickCount == 0)
 		return;
 
 	SeedType aSeedType = (SeedType)TodPickFromWeightedArray(aSeedPickArray, aSeedPickCount);
+	
+	if (mApp->mSlotData->lock_conveyor())
+	{
+		// Only allow seeds that have been unlocked
+		if (mApp->mAP->ReceivedItemCount(PVZRAPData::Items::Seed(aSeedType) == 0))
+		{
+			// TODO: Tell the user what seed was rejected
+			return;
+		}
+	}
 
 //#ifdef _DS_MINIGAMES
 //	if (mApp->mGameMode == GAMEMODE_CHALLENGE_BOMB_ALL_TOGETHER && mHadInitBombs && mBoard->mSeedBank->mNumPackets != mBoard->mSeedBank->GetNumSeedsOnConveyorBelt())
