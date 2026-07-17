@@ -1894,9 +1894,11 @@ void ZenGarden::GotoNextGarden()
 
     bool aGoToTree = false;
     bool haveTreeOfWisdom = true;
+    bool haveNextGarden = true;
+
     if (mGardenType == GardenType::GARDEN_MAIN)
     {
-        if (mApp->mPlayerInfo->mPurchases[(int)StoreItem::STORE_ITEM_MUSHROOM_GARDEN])
+        if (haveNextGarden)
         {
             mGardenType = GardenType::GARDEN_MUSHROOM;
             mBoard->mBackground = BackgroundType::BACKGROUND_MUSHROOM_GARDEN;
@@ -1913,7 +1915,7 @@ void ZenGarden::GotoNextGarden()
     }
     else if (mGardenType == GardenType::GARDEN_MUSHROOM)
     {
-        if (mApp->mPlayerInfo->mPurchases[(int)StoreItem::STORE_ITEM_AQUARIUM_GARDEN])
+        if (haveNextGarden)
         {
             mGardenType = GardenType::GARDEN_AQUARIUM;
             mBoard->mBackground = BackgroundType::BACKGROUND_ZOMBIQUARIUM;
@@ -1970,7 +1972,7 @@ void ZenGarden::GotoNextGarden()
     {
         if (mApp->mAP->ReceivedItemCount(PVZRAPData::Items::WHEELBARROW) == 0)
         {
-            mBoard->DisplayAdvice(_S("[ADVICE_NEED_WHEELBARROW]"), MessageStyle::MESSAGE_STYLE_HINT_TALL_FAST, AdviceType::ADVICE_NEED_WHEELBARROW);
+            mBoard->DisplayAdvice(_S("To move your plants between gardens, you need the Wheelbarrow!"), MessageStyle::MESSAGE_STYLE_HINT_TALL_FAST, AdviceType::ADVICE_NEED_WHEELBARROW);
         }
     }
 
