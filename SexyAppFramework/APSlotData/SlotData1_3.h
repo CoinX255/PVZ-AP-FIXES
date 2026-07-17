@@ -126,6 +126,24 @@ public:
         return {};
     }
     
+    bool lock_conveyor() override
+    {
+        // Not supported in 1.3
+        return {};
+    }
+    
+    bool lock_vasebreaker() override
+    {
+        // Not supported in 1.3
+        return {};
+    }
+    
+    bool lock_izombie() override
+    {
+        // Not supported in 1.3
+        return {};
+    }
+    
     bool easy_upgrade_plants() override
     {
         return slot_data["easy_upgrade_plants"].get<int>() > 0;
@@ -151,6 +169,24 @@ public:
     {
         // Not supported in 1.3
         return false;
+    }
+    
+    bool lawnlink_enabled() override
+    {
+        // Not supported in 1.3
+        return false;
+    }
+    
+    bool seedlink_enabled() override
+    {
+        // Not supported in 1.3
+        return false;
+    }
+    
+    std::optional<PVZRAPData::SlotData::LawnlinkChance> lawnlink_chances() override
+    {
+        // Not supported in 1.3
+        return {};
     }
     
     bool progressive_sun_capacity_items() override

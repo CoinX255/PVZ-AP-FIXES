@@ -298,6 +298,7 @@ public:
 	/*inline*/ void					SaveGame(const SexyString& theFileName);
 	bool							LoadGame(const SexyString& theFileName);
 	void							InitLevel();
+	std::vector<SeedType>           FixedSeeds(GameMode game_mode);
 	void							PopulateSeedBank();
 	void							DisplayAdvice(const SexyString& theAdvice, MessageStyle theMessageStyle, AdviceType theHelpIndex);
 	void							StartLevel();

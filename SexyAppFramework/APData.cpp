@@ -98,6 +98,21 @@ public:
     {
         return {};
     }
+    
+    bool lock_conveyor() override
+    {
+        return {};
+    }
+    
+    bool lock_vasebreaker() override
+    {
+        return {};
+    }
+    
+    bool lock_izombie() override
+    {
+        return {};
+    }
 
     bool easy_upgrade_plants() override
     {
@@ -120,6 +135,21 @@ public:
     }
     
     bool ringlink_enabled() override
+    {
+        return {};
+    }
+    
+    bool lawnlink_enabled() override
+    {
+        return {};
+    }
+    
+    bool seedlink_enabled() override
+    {
+        return {};
+    }
+    
+    std::optional<PVZRAPData::SlotData::LawnlinkChance> lawnlink_chances() override
     {
         return {};
     }
@@ -279,6 +309,21 @@ std::optional<std::map<ZombieType, int>> PVZRAPData::SlotData::zombie_weights_fo
     return inner->zombie_weights_for_level(level);
 }
 
+bool PVZRAPData::SlotData::lock_conveyor() const
+{
+    return inner->lock_conveyor();
+}
+
+bool PVZRAPData::SlotData::lock_vasebreaker() const
+{
+    return inner->lock_vasebreaker();
+}
+
+bool PVZRAPData::SlotData::lock_izombie() const
+{
+    return inner->lock_izombie();
+}
+
 bool PVZRAPData::SlotData::easy_upgrade_plants() const
 {
     return inner->easy_upgrade_plants();
@@ -322,6 +367,21 @@ bool PVZRAPData::SlotData::energylink_enabled() const
 bool PVZRAPData::SlotData::ringlink_enabled() const
 {
     return inner->ringlink_enabled();
+}
+
+bool PVZRAPData::SlotData::lawnlink_enabled() const
+{
+    return inner->lawnlink_enabled();
+}
+
+bool PVZRAPData::SlotData::seedlink_enabled() const
+{
+    return inner->seedlink_enabled();
+}
+
+std::optional<PVZRAPData::SlotData::LawnlinkChance> PVZRAPData::SlotData::lawnlink_chances() const
+{
+    return inner->lawnlink_chances();
 }
 
 std::optional<PVZRAPData::SlotData::SeedStats> PVZRAPData::SlotData::seed_stats(const SeedType seed) const

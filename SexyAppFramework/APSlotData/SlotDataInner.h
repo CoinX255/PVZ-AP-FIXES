@@ -29,6 +29,10 @@ public:
     virtual std::optional<std::vector<SeedType>> conveyor_order_for_level(int level) = 0;
     virtual std::optional<std::map<ZombieType, int>> zombie_weights_for_level(int level) = 0;
     
+    virtual bool lock_conveyor() = 0;
+    virtual bool lock_vasebreaker() = 0;
+    virtual bool lock_izombie() = 0;
+    
     virtual bool easy_upgrade_plants() = 0;
     virtual bool disable_storm_flashes() = 0;
     virtual bool imitater_open() = 0;
@@ -40,6 +44,10 @@ public:
     
     virtual bool energylink_enabled() = 0;
     virtual bool ringlink_enabled() = 0;
+    virtual bool lawnlink_enabled() = 0;
+    virtual bool seedlink_enabled() = 0;
+    
+    virtual std::optional<LawnlinkChance> lawnlink_chances() = 0;
     
     virtual std::optional<SeedStats> seed_stats(SeedType seed) = 0;
     virtual std::optional<ProjectileStats> projectile_stats(ProjectileType projectile) = 0;

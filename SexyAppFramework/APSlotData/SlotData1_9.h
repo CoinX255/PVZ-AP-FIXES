@@ -16,4 +16,29 @@ public:
     {
         return slot_data["requires_replanted"].get<int>();
     }
+    
+    bool lock_conveyor() override
+    {
+        return slot_data["lock_conveyor_plants"].get<int>();
+    }
+    
+    bool lock_vasebreaker() override
+    {
+        return slot_data["lock_vasebreaker_plants"].get<int>();
+    }
+    
+    bool lock_izombie() override
+    {
+        return slot_data["lock_izombie_zombies"].get<int>();
+    }
+    
+    bool lawnlink_enabled() override
+    {
+        return slot_data["lawnlink_enabled"].get<int>();
+    }
+    
+    bool seedlink_enabled() override
+    {
+        return slot_data["seedlink_enabled"].get<int>();
+    }
 };

@@ -2074,187 +2074,13 @@ void Board::InitLevel()
 		aPacket->mPacketType = SeedType::SEED_NONE;
 	}
 	// 设定固定卡牌
-	if (mApp->IsSlotMachineLevel())
-	{
-		TOD_ASSERT(mSeedBank->mNumPackets == 3);
-		mSeedBank->mSeedPackets[0].SetPacketType(SeedType::SEED_SUNFLOWER);
-		mSeedBank->mSeedPackets[1].SetPacketType(SeedType::SEED_PEASHOOTER);
-		mSeedBank->mSeedPackets[2].SetPacketType(SeedType::SEED_SNOWPEA);
-	}
-	else if (aGameMode == GameMode::GAMEMODE_CHALLENGE_ICE)
-	{
-		TOD_ASSERT(mSeedBank->mNumPackets == 6);
-		mSeedBank->mSeedPackets[0].SetPacketType(SeedType::SEED_PEASHOOTER);
-		mSeedBank->mSeedPackets[1].SetPacketType(SeedType::SEED_CHERRYBOMB);
-		mSeedBank->mSeedPackets[2].SetPacketType(SeedType::SEED_WALLNUT);
-		mSeedBank->mSeedPackets[3].SetPacketType(SeedType::SEED_REPEATER);
-		mSeedBank->mSeedPackets[4].SetPacketType(SeedType::SEED_SNOWPEA);
-		mSeedBank->mSeedPackets[5].SetPacketType(SeedType::SEED_CHOMPER);
-	}
-	else if (aGameMode == GameMode::GAMEMODE_CHALLENGE_ZOMBIQUARIUM)
-	{
-		TOD_ASSERT(mSeedBank->mNumPackets == 2);
-		mSeedBank->mSeedPackets[0].SetPacketType(SeedType::SEED_ZOMBIQUARIUM_SNORKLE);
-		mSeedBank->mSeedPackets[1].SetPacketType(SeedType::SEED_ZOMBIQUARIUM_TROPHY);
-	}
-	else if (aGameMode == GameMode::GAMEMODE_PUZZLE_I_ZOMBIE_1)
-	{
-		TOD_ASSERT(mSeedBank->mNumPackets == 3);
-		mSeedBank->mSeedPackets[0].SetPacketType(SeedType::SEED_ZOMBIE_NORMAL);
-		mSeedBank->mSeedPackets[1].SetPacketType(SeedType::SEED_ZOMBIE_PAIL);
-		mSeedBank->mSeedPackets[2].SetPacketType(SeedType::SEED_ZOMBIE_FOOTBALL);
-	}
-	else if (aGameMode == GameMode::GAMEMODE_PUZZLE_I_ZOMBIE_2)
-	{
-		TOD_ASSERT(mSeedBank->mNumPackets == 3);
-		mSeedBank->mSeedPackets[0].SetPacketType(SeedType::SEED_ZOMBIE_NORMAL);
-		mSeedBank->mSeedPackets[1].SetPacketType(SeedType::SEED_ZOMBIE_SCREEN_DOOR);
-		mSeedBank->mSeedPackets[2].SetPacketType(SeedType::SEED_ZOMBIE_PAIL);
-	}
-	else if (aGameMode == GameMode::GAMEMODE_PUZZLE_I_ZOMBIE_3)
-	{
-		TOD_ASSERT(mSeedBank->mNumPackets == 3);
-		mSeedBank->mSeedPackets[0].SetPacketType(SeedType::SEED_ZOMBIE_NORMAL);
-		mSeedBank->mSeedPackets[1].SetPacketType(SeedType::SEED_ZOMBIE_PAIL);
-		mSeedBank->mSeedPackets[2].SetPacketType(SeedType::SEED_ZOMBIE_DIGGER);
-	}
-	else if (aGameMode == GameMode::GAMEMODE_PUZZLE_I_ZOMBIE_4)
-	{
-		TOD_ASSERT(mSeedBank->mNumPackets == 3);
-		mSeedBank->mSeedPackets[0].SetPacketType(SeedType::SEED_ZOMBIE_NORMAL);
-		mSeedBank->mSeedPackets[1].SetPacketType(SeedType::SEED_ZOMBIE_PAIL);
-		mSeedBank->mSeedPackets[2].SetPacketType(SeedType::SEED_ZOMBIE_LADDER);
-	}
-	else if (aGameMode == GameMode::GAMEMODE_PUZZLE_I_ZOMBIE_5)
-	{
-		TOD_ASSERT(mSeedBank->mNumPackets == 4);
-		mSeedBank->mSeedPackets[0].SetPacketType(SeedType::SEED_ZOMBIE_NORMAL);
-		mSeedBank->mSeedPackets[1].SetPacketType(SeedType::SEED_ZOMBIE_PAIL);
-		mSeedBank->mSeedPackets[2].SetPacketType(SeedType::SEED_ZOMBIE_BUNGEE);
-		mSeedBank->mSeedPackets[3].SetPacketType(SeedType::SEED_ZOMBIE_BALLOON);
-	}
-	else if (aGameMode == GameMode::GAMEMODE_PUZZLE_I_ZOMBIE_6)
-	{
-		TOD_ASSERT(mSeedBank->mNumPackets == 4);
-		mSeedBank->mSeedPackets[0].SetPacketType(SeedType::SEED_ZOMBIE_NORMAL);
-		mSeedBank->mSeedPackets[1].SetPacketType(SeedType::SEED_ZOMBIE_POLEVAULTER);
-		mSeedBank->mSeedPackets[2].SetPacketType(SeedType::SEED_ZOMBIE_PAIL);
-		mSeedBank->mSeedPackets[3].SetPacketType(SeedType::SEED_ZOMBIE_GARGANTUAR);
-	}
-	else if (aGameMode == GameMode::GAMEMODE_PUZZLE_I_ZOMBIE_7)
-	{
-		TOD_ASSERT(mSeedBank->mNumPackets == 4);
-		mSeedBank->mSeedPackets[0].SetPacketType(SeedType::SEED_ZOMBIE_NORMAL);
-		mSeedBank->mSeedPackets[1].SetPacketType(SeedType::SEED_ZOMBIE_POLEVAULTER);
-		mSeedBank->mSeedPackets[2].SetPacketType(SeedType::SEED_ZOMBIE_PAIL);
-		mSeedBank->mSeedPackets[3].SetPacketType(SeedType::SEED_ZOMBIE_DANCER);
-	}
-	else if (aGameMode == GameMode::GAMEMODE_PUZZLE_I_ZOMBIE_8)
-	{
-		TOD_ASSERT(mSeedBank->mNumPackets == 6);
-		mSeedBank->mSeedPackets[0].SetPacketType(SeedType::SEED_ZOMBIE_IMP);
-		mSeedBank->mSeedPackets[1].SetPacketType(SeedType::SEED_ZOMBIE_TRAFFIC_CONE);
-		mSeedBank->mSeedPackets[2].SetPacketType(SeedType::SEED_ZOMBIE_PAIL);
-		mSeedBank->mSeedPackets[3].SetPacketType(SeedType::SEED_ZOMBIE_BUNGEE);
-		mSeedBank->mSeedPackets[4].SetPacketType(SeedType::SEED_ZOMBIE_DIGGER);
-		mSeedBank->mSeedPackets[5].SetPacketType(SeedType::SEED_ZOMBIE_LADDER);
-	}
-	else if (aGameMode == GameMode::GAMEMODE_PUZZLE_I_ZOMBIE_9)
-	{
-		TOD_ASSERT(mSeedBank->mNumPackets == 8);
-		mSeedBank->mSeedPackets[0].SetPacketType(SeedType::SEED_ZOMBIE_IMP);
-		mSeedBank->mSeedPackets[1].SetPacketType(SeedType::SEED_ZOMBIE_TRAFFIC_CONE);
-		mSeedBank->mSeedPackets[2].SetPacketType(SeedType::SEED_ZOMBIE_POLEVAULTER);
-		mSeedBank->mSeedPackets[3].SetPacketType(SeedType::SEED_ZOMBIE_PAIL);
-		mSeedBank->mSeedPackets[4].SetPacketType(SeedType::SEED_ZOMBIE_BUNGEE);
-		mSeedBank->mSeedPackets[5].SetPacketType(SeedType::SEED_ZOMBIE_DIGGER);
-		mSeedBank->mSeedPackets[6].SetPacketType(SeedType::SEED_ZOMBIE_LADDER);
-		mSeedBank->mSeedPackets[7].SetPacketType(SeedType::SEED_ZOMBIE_FOOTBALL);
-	}
-	else if (aGameMode == GameMode::GAMEMODE_PUZZLE_I_ZOMBIE_ENDLESS)
-	{
-		TOD_ASSERT(mSeedBank->mNumPackets == 9);
-		mSeedBank->mSeedPackets[0].SetPacketType(SeedType::SEED_ZOMBIE_IMP);
-		mSeedBank->mSeedPackets[1].SetPacketType(SeedType::SEED_ZOMBIE_TRAFFIC_CONE);
-		mSeedBank->mSeedPackets[2].SetPacketType(SeedType::SEED_ZOMBIE_POLEVAULTER);
-		mSeedBank->mSeedPackets[3].SetPacketType(SeedType::SEED_ZOMBIE_PAIL);
-		mSeedBank->mSeedPackets[4].SetPacketType(SeedType::SEED_ZOMBIE_BUNGEE);
-		mSeedBank->mSeedPackets[5].SetPacketType(SeedType::SEED_ZOMBIE_DIGGER);
-		mSeedBank->mSeedPackets[6].SetPacketType(SeedType::SEED_ZOMBIE_LADDER);
-		mSeedBank->mSeedPackets[7].SetPacketType(SeedType::SEED_ZOMBIE_FOOTBALL);
-		mSeedBank->mSeedPackets[8].SetPacketType(SeedType::SEED_ZOMBIE_DANCER);
-	}
-	else if (mApp->IsScaryPotterLevel())
-	{
-		TOD_ASSERT(mSeedBank->mNumPackets == 1);
-		mSeedBank->mSeedPackets[0].SetPacketType(SeedType::SEED_CHERRYBOMB);
-	}
-	else if (mApp->IsWhackAZombieLevel())
-	{
-		TOD_ASSERT(mSeedBank->mNumPackets == 3);
-		mSeedBank->mSeedPackets[0].SetPacketType(SeedType::SEED_POTATOMINE);
-		mSeedBank->mSeedPackets[1].SetPacketType(SeedType::SEED_GRAVEBUSTER);
-		mSeedBank->mSeedPackets[2].SetPacketType(mApp->IsAdventureMode() ? SeedType::SEED_CHERRYBOMB : SeedType::SEED_ICESHROOM);
-	}
-	else if (aGameMode == GameMode::GAMEMODE_LAST_STAND_STAGE_1)
-	{
-		TOD_ASSERT(mSeedBank->mNumPackets == 8);
-		mSeedBank->mSeedPackets[0].SetPacketType(SeedType::SEED_SNOWPEA);
-		mSeedBank->mSeedPackets[1].SetPacketType(SeedType::SEED_REPEATER);
-		mSeedBank->mSeedPackets[2].SetPacketType(SeedType::SEED_WALLNUT);
-		mSeedBank->mSeedPackets[3].SetPacketType(SeedType::SEED_CHOMPER);
-		mSeedBank->mSeedPackets[4].SetPacketType(SeedType::SEED_TORCHWOOD);
-		mSeedBank->mSeedPackets[5].SetPacketType(SeedType::SEED_SPIKEWEED);
-		mSeedBank->mSeedPackets[6].SetPacketType(SeedType::SEED_POTATOMINE);
-		mSeedBank->mSeedPackets[7].SetPacketType(SeedType::SEED_CHERRYBOMB);
-	}
-	else if (aGameMode == GameMode::GAMEMODE_LAST_STAND_STAGE_2)
-	{
-		TOD_ASSERT(mSeedBank->mNumPackets == 8);
-		mSeedBank->mSeedPackets[0].SetPacketType(SeedType::SEED_FUMESHROOM);
-		mSeedBank->mSeedPackets[1].SetPacketType(SeedType::SEED_GLOOMSHROOM);
-		mSeedBank->mSeedPackets[2].SetPacketType(SeedType::SEED_SCAREDYSHROOM);
-		mSeedBank->mSeedPackets[3].SetPacketType(SeedType::SEED_GRAVEBUSTER);
-		mSeedBank->mSeedPackets[4].SetPacketType(SeedType::SEED_PUMPKINSHELL);
-		mSeedBank->mSeedPackets[5].SetPacketType(SeedType::SEED_ICESHROOM);
-		mSeedBank->mSeedPackets[6].SetPacketType(SeedType::SEED_DOOMSHROOM);
-		mSeedBank->mSeedPackets[7].SetPacketType(SeedType::SEED_HYPNOSHROOM);
-	}
-	else if (aGameMode == GameMode::GAMEMODE_LAST_STAND_STAGE_3)
-	{
-		TOD_ASSERT(mSeedBank->mNumPackets == 8);
-		mSeedBank->mSeedPackets[0].SetPacketType(SeedType::SEED_LILYPAD);
-		mSeedBank->mSeedPackets[1].SetPacketType(SeedType::SEED_REPEATER);
-		mSeedBank->mSeedPackets[2].SetPacketType(SeedType::SEED_THREEPEATER);
-		mSeedBank->mSeedPackets[3].SetPacketType(SeedType::SEED_GATLINGPEA);
-		mSeedBank->mSeedPackets[4].SetPacketType(SeedType::SEED_TORCHWOOD);
-		mSeedBank->mSeedPackets[5].SetPacketType(SeedType::SEED_GARLIC);
-		mSeedBank->mSeedPackets[6].SetPacketType(SeedType::SEED_TALLNUT);
-		mSeedBank->mSeedPackets[7].SetPacketType(SeedType::SEED_SQUASH);
-	}
-	else if (aGameMode == GameMode::GAMEMODE_LAST_STAND_STAGE_4)
-	{
-		TOD_ASSERT(mSeedBank->mNumPackets == 8);
-		mSeedBank->mSeedPackets[0].SetPacketType(SeedType::SEED_LILYPAD);
-		mSeedBank->mSeedPackets[1].SetPacketType(SeedType::SEED_STARFRUIT);
-		mSeedBank->mSeedPackets[2].SetPacketType(SeedType::SEED_CACTUS);
-		mSeedBank->mSeedPackets[3].SetPacketType(SeedType::SEED_SNOWPEA);
-		mSeedBank->mSeedPackets[4].SetPacketType(SeedType::SEED_MAGNETSHROOM);
-		mSeedBank->mSeedPackets[5].SetPacketType(SeedType::SEED_PUMPKINSHELL);
-		mSeedBank->mSeedPackets[6].SetPacketType(SeedType::SEED_PLANTERN);
-		mSeedBank->mSeedPackets[7].SetPacketType(SeedType::SEED_CHERRYBOMB);
-	}
-	else if (aGameMode == GameMode::GAMEMODE_LAST_STAND_STAGE_5)
-	{
-		TOD_ASSERT(mSeedBank->mNumPackets == 8);
-		mSeedBank->mSeedPackets[0].SetPacketType(SeedType::SEED_FLOWERPOT);
-		mSeedBank->mSeedPackets[1].SetPacketType(SeedType::SEED_KERNELPULT);
-		mSeedBank->mSeedPackets[2].SetPacketType(SeedType::SEED_MELONPULT);
-		mSeedBank->mSeedPackets[3].SetPacketType(SeedType::SEED_WINTERMELON);
-		mSeedBank->mSeedPackets[4].SetPacketType(SeedType::SEED_CHOMPER);
-		mSeedBank->mSeedPackets[5].SetPacketType(SeedType::SEED_UMBRELLA);
-		mSeedBank->mSeedPackets[6].SetPacketType(SeedType::SEED_TALLNUT);
-		mSeedBank->mSeedPackets[7].SetPacketType(SeedType::SEED_JALAPENO);
+	auto fixed_seeds = this->FixedSeeds(aGameMode);
+	if (fixed_seeds.size() > 0) {
+		auto seed = 0;
+		for (auto& fixed_seed : fixed_seeds) {
+			mSeedBank->mSeedPackets[seed].mPacketType = fixed_seed;
+			seed++;
+		}
 	}
 	else if (!ChooseSeedsOnCurrentLevel() && !HasConveyorBeltSeedBank() && 
 		(mApp->mGameMode == GameMode::GAMEMODE_ADVENTURE || mApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_WAR_AND_PEAS || mApp->mGameMode == GAMEMODE_CHALLENGE_WAR_AND_PEAS_2 || mApp->mGameMode == GAMEMODE_CHALLENGE_BOBSLED_BONANZA || mApp->mGameMode == GAMEMODE_CHALLENGE_SPEED || mApp->mGameMode == GAMEMODE_CHALLENGE_LAST_STAND || mApp->mGameMode == GAMEMODE_CHALLENGE_POGO_PARTY || mApp->IsSurvivalMode()))
@@ -2273,6 +2099,105 @@ void Board::InitLevel()
 	}
 	// 关卡玩法相关的初始化
 	mChallenge->InitLevel();
+}
+
+std::vector<SeedType> Board::FixedSeeds(GameMode aGameMode)
+{
+	auto izombie_filter = [this](std::vector<SeedType> seeds)
+	{
+		if (!mApp->mSlotData->lock_izombie())
+		{
+			return seeds;
+		}
+		
+		std::vector<SeedType> new_seeds;
+		std::copy_if(seeds.begin(), seeds.end(), std::back_inserter(new_seeds), [this](SeedType seed)
+		{
+			return mApp->mAP->ReceivedItemCount(PVZRAPData::Items::Seed(seed)) > 0;
+		});
+		return new_seeds;
+	};
+	if (mApp->IsSlotMachineLevel())
+	{
+		return {SEED_SUNFLOWER, SEED_PEASHOOTER, SEED_SNOWPEA};
+	}
+	else if (aGameMode == GameMode::GAMEMODE_CHALLENGE_ICE)
+	{
+		return {SEED_PEASHOOTER, SEED_CHERRYBOMB, SEED_WALLNUT, SEED_REPEATER, SEED_SNOWPEA, SEED_CHOMPER};
+	}
+	else if (aGameMode == GameMode::GAMEMODE_CHALLENGE_ZOMBIQUARIUM)
+	{
+		return {SEED_ZOMBIQUARIUM_SNORKLE, SEED_ZOMBIQUARIUM_SNORKLE};
+	}
+	else if (aGameMode == GameMode::GAMEMODE_PUZZLE_I_ZOMBIE_1)
+	{
+		return izombie_filter({SEED_ZOMBIE_NORMAL, SEED_ZOMBIE_PAIL, SEED_ZOMBIE_FOOTBALL});
+	}
+	else if (aGameMode == GameMode::GAMEMODE_PUZZLE_I_ZOMBIE_2)
+	{
+		return izombie_filter({SEED_ZOMBIE_NORMAL, SEED_ZOMBIE_SCREEN_DOOR, SEED_ZOMBIE_PAIL});
+	}
+	else if (aGameMode == GameMode::GAMEMODE_PUZZLE_I_ZOMBIE_3)
+	{
+		return izombie_filter({SEED_ZOMBIE_NORMAL, SEED_ZOMBIE_PAIL, SEED_ZOMBIE_DIGGER});
+	}
+	else if (aGameMode == GameMode::GAMEMODE_PUZZLE_I_ZOMBIE_4)
+	{
+		return izombie_filter({SEED_ZOMBIE_NORMAL, SEED_ZOMBIE_PAIL, SEED_ZOMBIE_LADDER});
+	}
+	else if (aGameMode == GameMode::GAMEMODE_PUZZLE_I_ZOMBIE_5)
+	{
+		return izombie_filter({SEED_ZOMBIE_NORMAL, SEED_ZOMBIE_PAIL, SEED_ZOMBIE_BUNGEE, SEED_ZOMBIE_BALLOON});
+	}
+	else if (aGameMode == GameMode::GAMEMODE_PUZZLE_I_ZOMBIE_6)
+	{
+		return izombie_filter({SEED_ZOMBIE_NORMAL, SEED_ZOMBIE_POLEVAULTER, SEED_ZOMBIE_PAIL, SEED_ZOMBIE_GARGANTUAR});
+	}
+	else if (aGameMode == GameMode::GAMEMODE_PUZZLE_I_ZOMBIE_7)
+	{
+		return izombie_filter({SEED_ZOMBIE_NORMAL, SEED_ZOMBIE_POLEVAULTER, SEED_ZOMBIE_PAIL, SEED_ZOMBIE_DANCER});
+	}
+	else if (aGameMode == GameMode::GAMEMODE_PUZZLE_I_ZOMBIE_8)
+	{
+		return izombie_filter({SEED_ZOMBIE_IMP, SEED_ZOMBIE_TRAFFIC_CONE, SEED_ZOMBIE_PAIL, SEED_ZOMBIE_BUNGEE, SEED_ZOMBIE_DIGGER, SEED_ZOMBIE_LADDER});
+	}
+	else if (aGameMode == GameMode::GAMEMODE_PUZZLE_I_ZOMBIE_9)
+	{
+		return izombie_filter({SEED_ZOMBIE_IMP, SEED_ZOMBIE_TRAFFIC_CONE, SEED_ZOMBIE_POLEVAULTER, SEED_ZOMBIE_PAIL, SEED_ZOMBIE_BUNGEE, SEED_ZOMBIE_DIGGER, SEED_ZOMBIE_LADDER, SEED_ZOMBIE_FOOTBALL});
+	}
+	else if (aGameMode == GameMode::GAMEMODE_PUZZLE_I_ZOMBIE_ENDLESS)
+	{
+		return izombie_filter({SEED_ZOMBIE_IMP, SEED_ZOMBIE_TRAFFIC_CONE, SEED_ZOMBIE_POLEVAULTER, SEED_ZOMBIE_PAIL, SEED_ZOMBIE_BUNGEE, SEED_ZOMBIE_DIGGER, SEED_ZOMBIE_LADDER, SEED_ZOMBIE_FOOTBALL, SEED_ZOMBIE_DANCER});
+	}
+	else if (mApp->IsScaryPotterLevel())
+	{
+		return {SEED_CHERRYBOMB};
+	}
+	else if (mApp->IsWhackAZombieLevel())
+	{
+		return {SEED_POTATOMINE, SEED_GRAVEBUSTER, mApp->IsAdventureMode() ? SeedType::SEED_CHERRYBOMB : SeedType::SEED_ICESHROOM};
+	}
+	else if (aGameMode == GameMode::GAMEMODE_LAST_STAND_STAGE_1)
+	{
+		return {SEED_SNOWPEA, SEED_REPEATER, SEED_WALLNUT, SEED_CHOMPER, SEED_TORCHWOOD, SEED_SPIKEWEED, SEED_POTATOMINE, SEED_CHERRYBOMB};
+	}
+	else if (aGameMode == GameMode::GAMEMODE_LAST_STAND_STAGE_2)
+	{
+		return {SEED_FUMESHROOM, SEED_GLOOMSHROOM, SEED_SCAREDYSHROOM, SEED_GRAVEBUSTER, SEED_PUMPKINSHELL, SEED_ICESHROOM, SEED_DOOMSHROOM, SEED_HYPNOSHROOM};
+	}
+	else if (aGameMode == GameMode::GAMEMODE_LAST_STAND_STAGE_3)
+	{
+		return {SEED_LILYPAD, SEED_REPEATER, SEED_THREEPEATER, SEED_GATLINGPEA, SEED_TORCHWOOD, SEED_GARLIC, SEED_TALLNUT, SEED_SQUASH};
+	}
+	else if (aGameMode == GameMode::GAMEMODE_LAST_STAND_STAGE_4)
+	{
+		return {SEED_LILYPAD, SEED_STARFRUIT, SEED_CACTUS, SEED_SNOWPEA, SEED_MAGNETSHROOM, SEED_PUMPKINSHELL, SEED_PLANTERN, SEED_CHERRYBOMB};
+	}
+	else if (aGameMode == GameMode::GAMEMODE_LAST_STAND_STAGE_5)
+	{
+		return {SEED_FLOWERPOT, SEED_KERNELPULT, SEED_MELONPULT, SEED_WINTERMELON, SEED_CHOMPER, SEED_UMBRELLA, SEED_TALLNUT, SEED_JALAPENO};
+	}
+	return {};
 }
 
 void Board::PopulateSeedBank()
@@ -11397,6 +11322,12 @@ bool Board::HasConveyorBeltSeedBank()
 //0x41BEE0
 int Board::GetNumSeedsInBank()
 {
+	auto fixed_seeds = this->FixedSeeds(mApp->mGameMode);
+	if (fixed_seeds.size() > 0)
+	{
+		return fixed_seeds.size();
+	}
+	
 	int aNumSeeds = min(mApp->mAP->ReceivedItemCount(PVZRAPData::Items::EXTRA_SEED_SLOT) + 1, 10);
 	if (mApp->IsScaryPotterLevel())
 	{

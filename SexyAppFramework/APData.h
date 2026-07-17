@@ -90,6 +90,24 @@ namespace PVZRAPData
     {
         inline int64_t Seed(SeedType seed)
         {
+            switch (seed)
+            {
+            case SEED_ZOMBIE_NORMAL: return 85;
+            case SEED_ZOMBIE_TRAFFIC_CONE: return 86;
+            case SEED_ZOMBIE_PAIL: return 87;
+            case SEED_ZOMBIE_FOOTBALL: return 88;
+            case SEED_ZOMBIE_SCREEN_DOOR: return 89;
+            case SEED_ZOMBIE_DIGGER: return 90;
+            case SEED_ZOMBIE_LADDER: return 91;
+            case SEED_ZOMBIE_BUNGEE: return 92;
+            case SEED_ZOMBIE_BALLOON: return 93;
+            case SEED_ZOMBIE_POLEVAULTER: return 94;
+            case SEED_ZOMBIE_IMP: return 95;
+            case SEED_ZOMBIE_GARGANTUAR: return 96;
+            case SEED_ZOMBIE_DANCER: return 97;
+            default:
+                break;
+            }
             if (seed < SEED_PEASHOOTER || seed > SEED_IMITATER)
             {
                 return -1;
@@ -165,8 +183,29 @@ namespace PVZRAPData
         constexpr int64_t TRAP_CRATER = 80;
         constexpr int64_t SUN_BURST = 81;
         
+        constexpr int64_t EXPLODE_O_NUT = 82;
+        constexpr int64_t GIANT_WALL_NUT = 83;
+        constexpr int64_t BACKWARDS_REPEATER = 84;
+        
         inline SeedType SeedItem(int64_t item)
         {
+            switch (item)
+            {
+            case 85: return SEED_ZOMBIE_NORMAL;
+            case 86: return SEED_ZOMBIE_TRAFFIC_CONE;
+            case 87: return SEED_ZOMBIE_PAIL;
+            case 88: return SEED_ZOMBIE_FOOTBALL;
+            case 89: return SEED_ZOMBIE_SCREEN_DOOR;
+            case 90: return SEED_ZOMBIE_DIGGER;
+            case 91: return SEED_ZOMBIE_LADDER;
+            case 92: return SEED_ZOMBIE_BUNGEE;
+            case 93: return SEED_ZOMBIE_BALLOON;
+            case 94: return SEED_ZOMBIE_POLEVAULTER;
+            case 95: return SEED_ZOMBIE_IMP;
+            case 96: return SEED_ZOMBIE_GARGANTUAR;
+            case 97: return SEED_ZOMBIE_DANCER;
+            }
+            
             if (item < 100 || item > 100 + SEED_IMITATER)
             {
                 return SEED_NONE;
@@ -245,6 +284,13 @@ namespace PVZRAPData
             LevelItems = 3
         };
         
+        struct LawnlinkChance
+        {
+            int add_plant;
+            int overwrite_plant;
+            int remove_plant;
+        };
+        
         struct SeedStats
         {
             std::optional<int> sun_price;
@@ -302,6 +348,10 @@ namespace PVZRAPData
         std::optional<std::vector<SeedType>> conveyor_order_for_level(int level) const;
         std::optional<std::map<ZombieType, int>> zombie_weights_for_level(int level) const;
         
+        bool lock_conveyor() const;
+        bool lock_vasebreaker() const;
+        bool lock_izombie() const;
+        
         bool easy_upgrade_plants() const;
         bool disable_storm_flashes() const;
         bool imitater_open() const;
@@ -313,6 +363,10 @@ namespace PVZRAPData
         
         bool energylink_enabled() const;
         bool ringlink_enabled() const;
+        bool lawnlink_enabled() const;
+        bool seedlink_enabled() const;
+        
+        std::optional<LawnlinkChance> lawnlink_chances() const;
         
         std::optional<SeedStats> seed_stats(SeedType seed) const;
         std::optional<ProjectileStats> projectile_stats(ProjectileType projectile) const;
