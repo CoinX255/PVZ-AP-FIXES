@@ -96,6 +96,11 @@ void SDL3Image::DrawLineAA(double theStartX, double theStartY, double theEndX, d
 
 void SDL3Image::FillScanLines(Span* theSpans, int theSpanCount, const Color& theColor, int theDrawMode)
 {
+    for (auto i = 0; i < theSpanCount; i++)
+    {
+        auto span = theSpans[i];
+        DrawLine(span.mX, span.mY, span.mX + span.mWidth, span.mY, theColor, theDrawMode);
+    }
 }
 
 void SDL3Image::FillScanLinesWithCoverage(Span* theSpans, int theSpanCount, const Color& theColor, int theDrawMode, const BYTE* theCoverage, int theCoverX, int theCoverY, int theCoverWidth, int theCoverHeight)

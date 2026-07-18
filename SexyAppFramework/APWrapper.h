@@ -116,6 +116,7 @@ public:
         int column;
         int seed;
         bool conveyor;
+        std::string player;
     };
     
     void Connect(const std::string& server_name, const std::string& slot_name, const std::string& password = "");

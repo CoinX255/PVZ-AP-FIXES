@@ -2110,9 +2110,10 @@ void Challenge::UpdateConveyorBelt()
 	if (mApp->mSlotData->lock_conveyor())
 	{
 		// Only allow seeds that have been unlocked
-		if (mApp->mAP->ReceivedItemCount(PVZRAPData::Items::Seed(aSeedType) == 0))
+		if (mApp->mAP->ReceivedItemCount(PVZRAPData::Items::Seed(aSeedType)) == 0)
 		{
-			// TODO: Tell the user what seed was rejected
+			auto plant_name = Plant::GetNameString(mApp, aSeedType, mApp->mBoard->mLevel, SeedType::SEED_NONE);
+			mBoard->Admonish("Tried to spawn " + plant_name + " but it is not available", Sexy::Rect(mBoard->mSeedBank->mX, mBoard->mSeedBank->mY, mBoard->mSeedBank->mWidth, mBoard->mSeedBank->mHeight));
 			return;
 		}
 	}

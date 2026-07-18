@@ -39,6 +39,7 @@
 #define SEXY_PERF_ENABLED
 #include <nlohmann/json.hpp>
 
+#include "Admonition.h"
 #include "../SexyAppFramework/APData.h"
 #include "../SexyAppFramework/APWrapper.h"
 #include "../SexyAppFramework/PerfTimer.h"
@@ -581,8 +582,15 @@ Board::Board(LawnApp* theApp)
 			return;
 		}
 		
-		auto chances = mApp->mSlotData->lawnlink_chances().value_or({});
+		// auto chances = mApp->mSlotData->lawnlink_chances().value_or({});
+		PVZRAPData::SlotData::LawnlinkChance chances{100, 100, 100};
 		auto target_chance = Rand(100);
+		
+		auto grid_x = mApp->mBoard->GridToPixelX(data.column, data.row);
+		auto grid_x_other =  mApp->mBoard->GridToPixelX(data.column + 1 == MAX_GRID_SIZE_X ? data.column - 1 : data.column + 1, data.row);
+		auto grid_y = mApp->mBoard->GridToPixelY(data.column, data.row);
+		
+		Rect area(grid_x, grid_y, abs(grid_x - grid_x_other), LAWN_YMIN);
 		if (data.action == APWrapper::LawnLinkAction::PlantAdded)
 		{
 			if (mApp->mBoard->CanPlantAt(data.column, data.row, static_cast<SeedType>(data.seed)) == PlantingReason::PLANTING_OK)
@@ -593,6 +601,7 @@ Board::Board(LawnApp* theApp)
 				}
 				
 				mApp->mBoard->AddPlant(data.column, data.row, static_cast<SeedType>(data.seed), static_cast<SeedType>(data.seed));
+				mApp->mBoard->Admonish("Planted by " + data.player, area);
 			}
 			else if (mApp->mBoard->GetTopPlantAt(data.column, data.row, PlantPriority::TOPPLANT_DIGGING_ORDER) && mApp->mBoard->CanPlantAt(data.column, data.row, static_cast<SeedType>(data.seed)) == PlantingReason::PLANTING_NOT_HERE)
 			{
@@ -637,7 +646,8 @@ Board::Board(LawnApp* theApp)
 							mApp->mBoard->AddPlant(data.column, data.row, static_cast<SeedType>(data.seed), static_cast<SeedType>(data.seed));
 						}
 						
-						// TODO: Add notification that plant was overwritten
+						auto plant_name = Plant::GetNameString(mApp, overwritten_plant, mApp->mBoard->mLevel, SeedType::SEED_NONE);
+						mApp->mBoard->Admonish(plant_name + " replaced by " + data.player, area);
 					}
 					else // We can't plant there, we've got a non-aquatic plant - so there must be either an aquatic plant already there, or there's just a plant on a Lily Pad OR it's an impossible lily pad plant
 					{
@@ -655,7 +665,8 @@ Board::Board(LawnApp* theApp)
 							{
 								mApp->mBoard->AddPlant(data.column, data.row, static_cast<SeedType>(data.seed), static_cast<SeedType>(data.seed));
 							}
-							// TODO: Add notification that plant was overwritten
+							auto plant_name = Plant::GetNameString(mApp, overwritten_plant, mApp->mBoard->mLevel, SeedType::SEED_NONE);
+							mApp->mBoard->Admonish(plant_name + " replaced by " + data.player, area);
 						}
 					}
 				}
@@ -674,12 +685,13 @@ Board::Board(LawnApp* theApp)
 						overwritten_plant = top_plant->mSeedType;
 						top_plant->Die();
 					}
+					if (mApp->mBoard->CanPlantAt(data.column, data.row, static_cast<SeedType>(data.seed)) == PlantingReason::PLANTING_OK)
+					{
+						mApp->mBoard->AddPlant(data.column, data.row, static_cast<SeedType>(data.seed), static_cast<SeedType>(data.seed));
+					}
+					auto plant_name = Plant::GetNameString(mApp, overwritten_plant, mApp->mBoard->mLevel, SeedType::SEED_NONE);
+					mApp->mBoard->Admonish(plant_name + " replaced by " + data.player, area);
 				}
-				if (mApp->mBoard->CanPlantAt(data.column, data.row, static_cast<SeedType>(data.seed)) == PlantingReason::PLANTING_OK)
-				{
-					mApp->mBoard->AddPlant(data.column, data.row, static_cast<SeedType>(data.seed), static_cast<SeedType>(data.seed));
-				}
-				// TODO: Display LawnLink message
 			}
 		}
 		else if (data.action == APWrapper::LawnLinkAction::PlantRemoved)
@@ -692,8 +704,9 @@ Board::Board(LawnApp* theApp)
 			auto plant = mApp->mBoard->GetTopPlantAt(data.column, data.row, PlantPriority::TOPPLANT_EATING_ORDER);
 			if (plant)
 			{
+				auto plant_name = Plant::GetNameString(mApp, plant->mSeedType, mApp->mBoard->mLevel, SeedType::SEED_NONE);
+				mApp->mBoard->Admonish(plant_name + " removed by " + data.player, area);
 				plant->Die();
-				// TODO: Add notification that the plant died
 			}
 		}
 	});
@@ -749,6 +762,10 @@ Board::~Board()
 	}
 	delete mCutScene;
 	delete mChallenge;
+	for (auto admonition : mAdmonitions)
+	{
+		delete admonition;
+	}
 }
 
 void BoardInitForPlayer()
@@ -6467,6 +6484,12 @@ void Board::ZombiesWon(Zombie* theZombie)
 
 	ClearAdvice(AdviceType::ADVICE_NONE);
 	mApp->mBoardResult = BoardResult::BOARDRESULT_LOST;
+	
+	for (auto admonishment : mAdmonitions)
+	{
+		delete admonishment;
+	}
+	mAdmonitions.clear();
 
 	Zombie* aZombie = nullptr;
 	while (IterateZombies(aZombie))
@@ -7459,6 +7482,22 @@ void Board::Update()
 	mCursorObject->Update();
 	mPrevMouseX = mApp->mWidgetManager->mLastMouseX;
 	mPrevMouseY = mApp->mWidgetManager->mLastMouseY;
+	
+	auto i = 0;
+	while (i < mAdmonitions.size())
+	{
+		auto admonition = mAdmonitions[i];
+		admonition->Update();
+		if (admonition->IsDead())
+		{
+			delete admonition;
+			mAdmonitions.erase(mAdmonitions.begin() + i);
+		}
+		else
+		{
+			i++;
+		}
+	}
 }
 
 //0x416080
@@ -9674,6 +9713,19 @@ std::vector<int64_t> Board::WavesToSpawn(int wave)
 	return waves;
 }
 
+void Board::Admonish(std::string text, Sexy::Rect admonishment_area)
+{
+	auto admonition = new Admonition();
+	admonition->text = text;
+	admonition->area = admonishment_area;
+	if ((admonishment_area.mY + admonishment_area.mHeight) < BOARD_HEIGHT / 2)
+	{
+		admonition->admonish_downwards = true;
+	}
+	
+	this->mAdmonitions.push_back(admonition);
+}
+
 //0x41AA00
 bool Board::IsScaryPotterDaveTalking()
 {
@@ -10207,6 +10259,11 @@ void Board::DrawUITop(Graphics* g)
 	{
 		mCursorObject->Draw(g);
 		mCursorObject->EndDraw(g);
+	}
+	
+	for (auto admonition : mAdmonitions)
+	{
+		admonition->Draw(g);
 	}
 
 	mToolTip->Draw(g);

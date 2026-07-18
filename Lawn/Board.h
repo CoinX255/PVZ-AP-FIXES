@@ -18,6 +18,7 @@
 
 #include "../SexyAppFramework/SDL3Font.h"
 
+class Admonition;
 class ListenerHandle;
 using namespace Sexy;
 
@@ -129,6 +130,7 @@ public:
 	ListenerHandle*                 mAPRingLinkListener;
 	ListenerHandle*                 mAPSeedLinkListener;
 	ListenerHandle*					mAPLawnLinkListener;
+	std::vector<Admonition*>		mAdmonitions;
 	DataArray<Zombie>				mZombies;												//+0x90
 	DataArray<Plant>				mPlants;												//+0xAC
 	DataArray<Projectile>			mProjectiles;											//+0xC8
@@ -560,6 +562,7 @@ public:
 	bool                            SeedLinkEligible();
 
 	std::vector<int64_t>			WavesToSpawn(int wave);
+	void                            Admonish(std::string text, Sexy::Rect admonishment_area);
 
 #ifdef _REPLANTED_SPEED_CONTROL
 	float							GetSpeedValue(SpeedMod theMod);

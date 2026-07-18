@@ -497,13 +497,15 @@ void APWrapper::Connect(const std::string& server_name, const std::string& slot_
                 
                 if (source != d->mAP->get_player_number())
                 {
+                    auto player = d->mAP->get_player_alias(source);
                     d->processing_lawn_link = true;
                     LawnLinkData lawnlink_data {
                         action,
                         row,
                         column,
                         seed,
-                        conveyor
+                        conveyor,
+                        player
                     };
                     
                     for (const auto& lawnlink_listener : this->d->lawnlink_listeners)
