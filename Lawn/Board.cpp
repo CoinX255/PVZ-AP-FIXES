@@ -581,8 +581,7 @@ Board::Board(LawnApp* theApp)
 			return;
 		}
 		
-		// auto chances = mApp->mSlotData->lawnlink_chances().value_or({});
-		auto chances = PVZRAPData::SlotData::LawnlinkChance{100, 100, 100};
+		auto chances = mApp->mSlotData->lawnlink_chances().value_or({});
 		auto target_chance = Rand(100);
 		if (data.action == APWrapper::LawnLinkAction::PlantAdded)
 		{
