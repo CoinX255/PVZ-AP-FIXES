@@ -583,8 +583,7 @@ Board::Board(LawnApp* theApp)
 			return;
 		}
 		
-		// auto chances = mApp->mSlotData->lawnlink_chances().value_or({});
-		PVZRAPData::SlotData::LawnlinkChance chances{100, 100, 100};
+		auto chances = mApp->mSlotData->lawnlink_chances().value_or({});
 		auto target_chance = Rand(100);
 		
 		auto grid_x = mApp->mBoard->GridToPixelX(data.column, data.row);
