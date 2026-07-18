@@ -22,7 +22,7 @@ public:
     std::map<uint64_t, std::function<void(const std::string&)>> slot_refused_listeners;
     std::map<uint64_t, std::function<void(const std::string&, const std::string&)>> deathlink_listeners;
     std::map<uint64_t, std::function<void(const long&)>> ringlink_listeners;
-    std::map<uint64_t, std::function<void(const int&)>> seedlink_listeners;
+    std::map<uint64_t, std::function<void(const int&, std::string)>> seedlink_listeners;
     std::map<uint64_t, std::function<void(const APWrapper::LawnLinkData&)>> lawnlink_listeners;
     std::map<uint64_t, std::function<void(const std::string&)>> any_chat_listeners;
     std::map<uint64_t, std::function<void(const std::string&, const nlohmann::json&)>> data_storage_value_change_listeners;
@@ -459,9 +459,10 @@ void APWrapper::Connect(const std::string& server_name, const std::string& slot_
                 
                 if (source != d->mAP->get_player_number())
                 {
+                    auto player = d->mAP->get_player_alias(source);
                     for (const auto& seedlink_listener : this->d->seedlink_listeners)
                     {
-                        seedlink_listener.second(seed);
+                        seedlink_listener.second(seed, player);
                     }
                 }
             }
@@ -1093,7 +1094,7 @@ ListenerHandle* APWrapper::AddRingLinkListener(std::function<void(const long&)> 
     return new ListenerHandle([this, id] { this->d->ringlink_listeners.erase(id); });
 }
 
-ListenerHandle* APWrapper::AddSeedLinkListener(std::function<void(const int&)> listener) const
+ListenerHandle* APWrapper::AddSeedLinkListener(std::function<void(const int&, std::string)> listener) const
 {
     auto id = d->next_listener_id++;
     this->d->seedlink_listeners.insert_or_assign(id, listener);

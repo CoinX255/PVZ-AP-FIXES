@@ -191,7 +191,7 @@ public:
     ListenerHandle* AddDisconnectionListener(std::function<void()>) const;
     ListenerHandle* AddDeathLinkListener(std::function<void(const std::string&, const std::string&)>) const;
     ListenerHandle* AddRingLinkListener(std::function<void(const long&)>) const;
-    ListenerHandle* AddSeedLinkListener(std::function<void(const int&)>) const;
+    ListenerHandle* AddSeedLinkListener(std::function<void(const int&, std::string)>) const;
     ListenerHandle* AddLawnLinkListener(std::function<void(const LawnLinkData&)>) const;
     ListenerHandle* AddAnyChatMessageListener(std::function<void(const std::string&)>) const;
     ListenerHandle* AddDataStorageValueChangeListener(std::function<void(const std::string&, const nlohmann::json&)>) const;

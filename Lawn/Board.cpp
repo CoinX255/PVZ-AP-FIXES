@@ -556,7 +556,7 @@ Board::Board(LawnApp* theApp)
 			this->TakeSunMoney(-amount);
 		}
 	});
-	mAPSeedLinkListener = mApp->mAP->AddSeedLinkListener([this](int seed)
+	mAPSeedLinkListener = mApp->mAP->AddSeedLinkListener([this](int seed, std::string player)
 	{
 		if (!this->SeedLinkEligible())
 		{
@@ -571,6 +571,7 @@ Board::Board(LawnApp* theApp)
 				seed_packet->mActive = false;
 				seed_packet->mRefreshing = true;
 				seed_packet->mRefreshTime = Plant::GetRefreshTime(mApp, seed_packet->mPacketType, seed_packet->mImitaterType);
+				this->Admonish("Used by " + player, Rect(seed_packet->mX, seed_packet->mY, seed_packet->mWidth, seed_packet->mHeight));
 			}
 		}
 	});
