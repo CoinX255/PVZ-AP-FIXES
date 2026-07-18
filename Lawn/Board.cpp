@@ -573,6 +573,131 @@ Board::Board(LawnApp* theApp)
 			}
 		}
 	});
+	mAPLawnLinkListener = mApp->mAP->AddLawnLinkListener([this](APWrapper::LawnLinkData data)
+	{
+		if (data.conveyor != mApp->mBoard->HasConveyorBeltSeedBank())
+		{
+			// Ignore LawnLink for this instance
+			return;
+		}
+		
+		// auto chances = mApp->mSlotData->lawnlink_chances().value_or({});
+		auto chances = PVZRAPData::SlotData::LawnlinkChance{100, 100, 100};
+		auto target_chance = Rand(100);
+		if (data.action == APWrapper::LawnLinkAction::PlantAdded)
+		{
+			if (mApp->mBoard->CanPlantAt(data.column, data.row, static_cast<SeedType>(data.seed)) == PlantingReason::PLANTING_OK)
+			{
+				if (target_chance >= chances.add_plant)
+				{
+					return;
+				}
+				
+				mApp->mBoard->AddPlant(data.column, data.row, static_cast<SeedType>(data.seed), static_cast<SeedType>(data.seed));
+			}
+			else if (mApp->mBoard->GetTopPlantAt(data.column, data.row, PlantPriority::TOPPLANT_DIGGING_ORDER) && mApp->mBoard->CanPlantAt(data.column, data.row, static_cast<SeedType>(data.seed)) == PlantingReason::PLANTING_NOT_HERE)
+			{
+				if (target_chance >= chances.overwrite_plant)
+				{
+					return;
+				}
+				
+				if (((data.seed == SeedType::SEED_SPIKEWEED || data.seed == SeedType::SEED_SPIKEROCK) && (mApp->mBoard->mBackground == BackgroundType::BACKGROUND_5_ROOF || mApp->mBoard->mBackground == BackgroundType::BACKGROUND_6_BOSS)) || // No spikeweed on the roof levels
+					(data.seed == SeedType::SEED_GRAVEBUSTER) ||
+					(data.seed == SeedType::SEED_INSTANT_COFFEE) ||
+					(data.seed == SeedType::SEED_PUMPKINSHELL) ||
+					(!mApp->mSlotData->easy_upgrade_plants() && Plant::IsUpgrade(mApp, static_cast<SeedType>(data.seed)))
+				) {
+					return;
+				}
+				
+				if ((data.row == 2 || data.row == 3) && (mApp->mBoard->mBackground == BackgroundType::BACKGROUND_3_POOL || mApp->mBoard->mBackground == BackgroundType::BACKGROUND_4_FOG)) // Water lanes
+				{
+					if (Plant::IsAquatic(static_cast<SeedType>(data.seed))) // This is an aquatic plant, so it must be an empty tile in order to use it
+					{
+						SeedType overwritten_plant = SeedType::SEED_NONE;
+						for (;;)
+						{
+							auto top_plant = mApp->mBoard->GetTopPlantAt(data.column, data.row, PlantPriority::TOPPLANT_DIGGING_ORDER); // Get top plant
+							if (data.seed == SeedType::SEED_LILYPAD && !Plant::IsAquatic(top_plant->mSeedType)) // Lawnlink receiving a Lily Pad onto a tile with a Lily Pad already, just do nothing
+							{
+								return;
+							}
+							if (!top_plant) // If there is no plant there any more, break the loop
+							{
+								break;
+							}
+							else // If there is still a plant there, we need to get rid of it
+							{
+								overwritten_plant = top_plant->mSeedType;
+								top_plant->Die();
+							}
+						}
+						if (mApp->mBoard->CanPlantAt(data.column, data.row, static_cast<SeedType>(data.seed)) == PlantingReason::PLANTING_OK)
+						{
+							mApp->mBoard->AddPlant(data.column, data.row, static_cast<SeedType>(data.seed), static_cast<SeedType>(data.seed));
+						}
+						
+						// TODO: Add notification that plant was overwritten
+					}
+					else // We can't plant there, we've got a non-aquatic plant - so there must be either an aquatic plant already there, or there's just a plant on a Lily Pad OR it's an impossible lily pad plant
+					{
+						if (data.seed == SeedType::SEED_POTATOMINE || data.seed == SeedType::SEED_SPIKEROCK || data.seed == SeedType::SEED_SPIKEWEED || data.seed == SeedType::SEED_FLOWERPOT) // Impossible lily pad plants
+						{
+							return;
+						}
+						
+						auto top_plant = mApp->mBoard->GetTopPlantAt(data.column, data.row, PlantPriority::TOPPLANT_DIGGING_ORDER);
+						if (!Plant::IsAquatic(top_plant->mSeedType)) // If it's an aquatic plant, just give up as you'd have to spawn in a Lily Pad as well which is cheating >:(
+						{
+							auto overwritten_plant = top_plant->mSeedType;
+							top_plant->Die(); // Remove plant on the Lily Pad
+							if (mApp->mBoard->CanPlantAt(data.column, data.row, static_cast<SeedType>(data.seed)) == PlantingReason::PLANTING_OK)
+							{
+								mApp->mBoard->AddPlant(data.column, data.row, static_cast<SeedType>(data.seed), static_cast<SeedType>(data.seed));
+							}
+							// TODO: Add notification that plant was overwritten
+						}
+					}
+				}
+				else if (!Plant::IsAquatic(static_cast<SeedType>(data.seed)) && !(data.seed == SeedType::SEED_FLOWERPOT && mApp->mBoard->GetFlowerPotAt(data.column, data.row))) // Planting a non-aquatic plant
+				{
+					SeedType overwritten_plant = SeedType::SEED_NONE;
+					for (;;)
+					{
+						auto top_plant = mApp->mBoard->GetTopPlantAt(data.column, data.row, PlantPriority::TOPPLANT_DIGGING_ORDER);
+						if (mApp->mBoard->CanPlantAt(data.column, data.row, static_cast<SeedType>(data.seed)) == PlantingReason::PLANTING_OK || !top_plant) // If you can now plant there, plant it - otherwise keep on deleting!
+						{
+							break;
+						}
+						
+						// If there is still a plant there, we need to get rid of it
+						overwritten_plant = top_plant->mSeedType;
+						top_plant->Die();
+					}
+				}
+				if (mApp->mBoard->CanPlantAt(data.column, data.row, static_cast<SeedType>(data.seed)) == PlantingReason::PLANTING_OK)
+				{
+					mApp->mBoard->AddPlant(data.column, data.row, static_cast<SeedType>(data.seed), static_cast<SeedType>(data.seed));
+				}
+				// TODO: Display LawnLink message
+			}
+		}
+		else if (data.action == APWrapper::LawnLinkAction::PlantRemoved)
+		{
+			if (target_chance >= chances.remove_plant)
+			{
+				return;
+			}
+			
+			auto plant = mApp->mBoard->GetTopPlantAt(data.column, data.row, PlantPriority::TOPPLANT_EATING_ORDER);
+			if (plant)
+			{
+				plant->Die();
+				// TODO: Add notification that the plant died
+			}
+		}
+	});
 }
 
 //0x408670、0x408690
@@ -582,6 +707,7 @@ Board::~Board()
 	delete mAPDisconnectListener;
 	delete mAPRingLinkListener;
 	delete mAPSeedLinkListener;
+	delete mAPLawnLinkListener;
 	delete mAdvice;
 	delete mCursorObject;
 	delete mCursorPreview;
@@ -2361,7 +2487,7 @@ void Board::InitLawnMowers()
 }
 
 //0x40BD30
-bool Board::ChooseSeedsOnCurrentLevel()
+bool Board::ChooseSeedsOnCurrentLevel(bool ignore_seed_count_check)
 {
 	if (mApp->IsChallengeWithoutSeedBank() || HasConveyorBeltSeedBank())
 		return false;
@@ -2377,6 +2503,11 @@ bool Board::ChooseSeedsOnCurrentLevel()
 
 	if (mApp->mGameMode >= GameMode::GAMEMODE_LAST_STAND_STAGE_1 && mApp->mGameMode <= GameMode::GAMEMODE_LAST_STAND_STAGE_5)
 		return false;
+	
+	if (ignore_seed_count_check)
+	{
+		return true;
+	}
 	
 	auto numSeedsAvailable = 0;
 	for (auto i = SEED_PEASHOOTER; i <= SEED_IMITATER; i = (SeedType)(i + 1))
@@ -2952,6 +3083,19 @@ Plant* Board::AddPlant(int theGridX, int theGridY, SeedType theSeedType, SeedTyp
 
 	}
 #endif
+	
+	// Send LawnLink if eligible
+	if (!mApp->IsWallnutBowlingLevel() && !(mApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_LAST_STAND && mChallenge->mChallengeState != ChallengeState::STATECHALLENGE_LAST_STAND_ONSLAUGHT) && mApp->mGameScene == GameScenes::SCENE_PLAYING && (ChooseSeedsOnCurrentLevel(true) || HasConveyorBeltSeedBank()))
+	{
+		mApp->mAP->SendLawnLink({
+			APWrapper::LawnLinkAction::PlantAdded,
+			aPlant->mRow,
+			aPlant->mPlantCol,
+			aPlant->mSeedType == SeedType::SEED_IMITATER ? aPlant->mImitaterType : aPlant->mSeedType,
+			HasConveyorBeltSeedBank()
+		});
+	}
+	
 	return aPlant;
 }
 

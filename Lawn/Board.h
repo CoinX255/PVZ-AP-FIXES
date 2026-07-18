@@ -128,6 +128,7 @@ public:
 	ListenerHandle*                 mAPDisconnectListener;
 	ListenerHandle*                 mAPRingLinkListener;
 	ListenerHandle*                 mAPSeedLinkListener;
+	ListenerHandle*					mAPLawnLinkListener;
 	DataArray<Zombie>				mZombies;												//+0x90
 	DataArray<Plant>				mPlants;												//+0xAC
 	DataArray<Projectile>			mProjectiles;											//+0xC8
@@ -339,7 +340,7 @@ public:
 	/*inline*/ bool					NeedSaveGame();
 	/*inline*/ bool					RowCanHaveZombies(int theRow);
 	void							ProcessDeleteQueue();
-	bool							ChooseSeedsOnCurrentLevel();
+	bool							ChooseSeedsOnCurrentLevel(bool ignore_seed_count_check = false);
 	int								GetNumSeedsInBank();
 	/*inline*/ bool					StageIsNight();
 	/*inline*/ bool					StageHasPool();

@@ -103,6 +103,21 @@ public:
         Hints
     };
     
+    enum class LawnLinkAction
+    {
+        PlantAdded = 0,
+        PlantRemoved = 1,
+    };
+    
+    struct LawnLinkData
+    {
+        LawnLinkAction action;
+        int row;
+        int column;
+        int seed;
+        bool conveyor;
+    };
+    
     void Connect(const std::string& server_name, const std::string& slot_name, const std::string& password = "");
     void Disconnect() const;
     void DisconnectNow() const;
@@ -152,6 +167,9 @@ public:
     void EnableSeedLink(bool enable) const;
     void SendSeedLink(int seed) const;
     
+    void EnableLawnLink(bool enable) const;
+    void SendLawnLink(const LawnLinkData& data) const;
+    
     std::list<std::string> ChatMessages() const;
     void SendAPMessage(const std::string& message) const;
     void PushMessageHistory(const std::string& message) const;
@@ -173,6 +191,7 @@ public:
     ListenerHandle* AddDeathLinkListener(std::function<void(const std::string&, const std::string&)>) const;
     ListenerHandle* AddRingLinkListener(std::function<void(const long&)>) const;
     ListenerHandle* AddSeedLinkListener(std::function<void(const int&)>) const;
+    ListenerHandle* AddLawnLinkListener(std::function<void(const LawnLinkData&)>) const;
     ListenerHandle* AddAnyChatMessageListener(std::function<void(const std::string&)>) const;
     ListenerHandle* AddDataStorageValueChangeListener(std::function<void(const std::string&, const nlohmann::json&)>) const;
 

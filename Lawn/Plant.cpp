@@ -6588,6 +6588,20 @@ void Plant::Die()
             }
         }
     }
+    
+    // Send LawnLink if required
+    constexpr SeedType suicidal_plants[] = {SeedType::SEED_CHERRYBOMB, SeedType::SEED_GRAVEBUSTER, SeedType::SEED_ICESHROOM, SeedType::SEED_DOOMSHROOM, SeedType::SEED_JALAPENO, SeedType::SEED_BLOVER, SeedType::SEED_INSTANT_COFFEE};
+    
+    if (ranges::find(suicidal_plants, mSeedType) != std::end(suicidal_plants) && !mApp->IsWallnutBowlingLevel() && mApp->mGameScene == GameScenes::SCENE_PLAYING && (mBoard->ChooseSeedsOnCurrentLevel(true) && mBoard->HasConveyorBeltSeedBank()))
+    {
+        mApp->mAP->SendLawnLink({
+            APWrapper::LawnLinkAction::PlantRemoved,
+            this->mRow,
+            this->mPlantCol,
+            this->mSeedType,
+            mBoard->HasConveyorBeltSeedBank()
+        });
+    }
 }
 
 PlantDefinition& GetPlantDefinition(SeedType theSeedType)

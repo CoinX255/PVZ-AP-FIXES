@@ -23,6 +23,7 @@ public:
     std::map<uint64_t, std::function<void(const std::string&, const std::string&)>> deathlink_listeners;
     std::map<uint64_t, std::function<void(const long&)>> ringlink_listeners;
     std::map<uint64_t, std::function<void(const int&)>> seedlink_listeners;
+    std::map<uint64_t, std::function<void(const APWrapper::LawnLinkData&)>> lawnlink_listeners;
     std::map<uint64_t, std::function<void(const std::string&)>> any_chat_listeners;
     std::map<uint64_t, std::function<void(const std::string&, const nlohmann::json&)>> data_storage_value_change_listeners;
     
@@ -42,6 +43,7 @@ public:
     std::string last_deathlink_source;
     std::string last_deathlink_cause;
     long our_ringlink_source;
+    bool processing_lawn_link;
     
     std::list<std::string> chat_messages;
     std::vector<std::string> message_history;
@@ -461,6 +463,54 @@ void APWrapper::Connect(const std::string& server_name, const std::string& slot_
                     {
                         seedlink_listener.second(seed);
                     }
+                }
+            }
+            
+            if (tags[0] == "LawnLink")
+            {
+                // Handle LawnLink packet
+                auto data = bounce_data["data"];
+                auto source_json = data["source"];
+                auto team_json = data["team"];
+                auto action_json = data["action"];
+                auto row_json = data["row"];
+                auto column_json = data["column"];
+                auto seed_json = data["seed"];
+                auto conveyor_json = data["conveyor"];
+                
+                if (team_json.is_number() && team_json.get<int>() != d->mAP->get_team_number())
+                {
+                    return;
+                }
+                
+                if (!source_json.is_number_integer() || !action_json.is_number_integer() || !seed_json.is_number_integer() || !row_json.is_number_integer() || !column_json.is_number_integer() || !conveyor_json.is_boolean())
+                {
+                    return;
+                }
+                
+                auto source = source_json.get<long>();
+                auto action = static_cast<LawnLinkAction>(action_json.get<int>());
+                auto row = row_json.get<int>();
+                auto column = column_json.get<int>();
+                auto seed = seed_json.get<int>();
+                auto conveyor = conveyor_json.get<bool>();
+                
+                if (source != d->mAP->get_player_number())
+                {
+                    d->processing_lawn_link = true;
+                    LawnLinkData lawnlink_data {
+                        action,
+                        row,
+                        column,
+                        seed,
+                        conveyor
+                    };
+                    
+                    for (const auto& lawnlink_listener : this->d->lawnlink_listeners)
+                    {
+                        lawnlink_listener.second(lawnlink_data);
+                    }
+                    d->processing_lawn_link = false;
                 }
             }
         }
@@ -922,6 +972,48 @@ void APWrapper::SendSeedLink(int seed) const
     }
 }
 
+void APWrapper::EnableLawnLink(bool enable) const
+{
+    if (!enable)
+    {
+        d->tags.remove_if([](std::string tag)
+        {
+            return tag == "LawnLink";
+        });
+    }
+    else
+    {
+        d->tags.emplace_back("LawnLink");
+    }
+    
+    this->UpdateConnectionInformation();
+}
+
+void APWrapper::SendLawnLink(const LawnLinkData& data) const
+{
+    // Ensure LawnLink is on and we aren't processing a LawnLink
+    if (d->processing_lawn_link) return;
+    
+    for (const auto& tag : d->tags)
+    {
+        if (tag == "LawnLink")
+        {
+            auto time = d->mAP->get_server_time();
+            d->mAP->Bounce({
+                {"time", time},
+                {"source", d->mAP->get_player_number()},
+                {"team", d->mAP->get_team_number()},
+                {"action", static_cast<int>(data.action)},
+                {"row", data.row},
+                {"column", data.column},
+                {"seed", data.seed},
+                {"conveyor", data.conveyor}
+            }, {}, {}, {"LawnLink"});
+            return;
+        }
+    }
+}
+
 std::list<std::string> APWrapper::ChatMessages() const
 {
     return d->chat_messages;
@@ -1005,6 +1097,14 @@ ListenerHandle* APWrapper::AddSeedLinkListener(std::function<void(const int&)> l
     this->d->seedlink_listeners.insert_or_assign(id, listener);
     
     return new ListenerHandle([this, id] { this->d->seedlink_listeners.erase(id); });
+}
+
+ListenerHandle* APWrapper::AddLawnLinkListener(std::function<void(const LawnLinkData&)> listener) const
+{
+    auto id = d->next_listener_id++;
+    this->d->lawnlink_listeners.insert_or_assign(id, listener);
+    
+    return new ListenerHandle([this, id] { this->d->lawnlink_listeners.erase(id); });
 }
 
 ListenerHandle* APWrapper::AddAnyChatMessageListener(std::function<void(const std::string&)> listener) const
