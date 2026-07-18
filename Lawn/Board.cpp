@@ -2147,7 +2147,7 @@ std::vector<SeedType> Board::FixedSeeds(GameMode aGameMode)
 	}
 	else if (aGameMode == GameMode::GAMEMODE_CHALLENGE_ZOMBIQUARIUM)
 	{
-		return {SEED_ZOMBIQUARIUM_SNORKLE, SEED_ZOMBIQUARIUM_SNORKLE};
+		return {SEED_ZOMBIQUARIUM_SNORKLE, SEED_ZOMBIQUARIUM_TROPHY};
 	}
 	else if (aGameMode == GameMode::GAMEMODE_PUZZLE_I_ZOMBIE_1)
 	{
