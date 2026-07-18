@@ -12,6 +12,7 @@
 class ListenerHandle;
 class LawnApp;
 class ToolTipWidget;
+class Admonition;
 namespace Sexy
 {
     class DialogButton;
@@ -127,7 +128,9 @@ public:
     ReanimationID               mSpotLightID;
     
     ListenerHandle*             mAPItemHandler;
-
+    Admonition*                 mZombossAdmonition;
+    bool                        mZombossAdmonitionVisible;
+    
 public:
     GameSelector(LawnApp* theApp);
     virtual ~GameSelector();

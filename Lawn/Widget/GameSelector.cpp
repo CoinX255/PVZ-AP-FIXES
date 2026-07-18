@@ -8,6 +8,7 @@
 
 #include "../../LawnApp.h"
 #include "AlmanacDialog.h"
+#include "../Admonition.h"
 #include "../../Resources.h"
 #include "../System/Music.h"
 #include "../ToolTipWidget.h"
@@ -456,10 +457,17 @@ GameSelector::GameSelector(LawnApp* theApp)
 #endif
 	TodHesitationTrace("gameselectorinit");
 	
+	mZombossAdmonition = new Admonition();
+	mZombossAdmonition->SetText("Zomboss is available to defeat!");
+	mZombossAdmonition->SetAdmonishDownwards(false);
+	
 	mAPItemHandler = mApp->mAP->AddItemsReceivedListener([this](const std::list<APItem>&)
 	{
 		this->SyncProfile(false);
+		
+		this->mZombossAdmonitionVisible = mApp->IsLevelOpen(50) && !mApp->mAP->IsGoalReached();
 	});
+	this->mZombossAdmonitionVisible = mApp->IsLevelOpen(50) && !mApp->mAP->IsGoalReached();
 }
 
 //0x449D00¡¢0x449D20
@@ -521,6 +529,7 @@ GameSelector::~GameSelector()
 #endif
 
 	delete mToolTip;
+	delete mZombossAdmonition;
 }
 
 //0x449E60
@@ -858,6 +867,12 @@ void GameSelector::Draw(Graphics* g)
 		TodDrawStringMatrix(g, Sexy::FONT_BRIANNETOD16, aOverlayMatrix * aOffsetMatrix, aWelcomeStr, Color(255, 245, 200));
 	}
 	g->PopState();
+	
+	if (mZombossAdmonitionVisible)
+	{
+		mZombossAdmonition->SetArea(Rect(mAdventureButton->mX, mAdventureButton->mY, mAdventureButton->mWidth, mAdventureButton->mHeight));
+		mZombossAdmonition->Draw(g);
+	}
 }
 
 //0x44AB50
