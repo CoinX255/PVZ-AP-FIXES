@@ -3665,7 +3665,29 @@ SeedType LawnApp::GetAwardSeedForLevel(int theLevel)
 	// TODO: Make sure this is actually a PvZ item
 	auto seed = PVZRAPData::Items::SeedItem(item.item);
 	if (seed == SeedType::SEED_NONE || !mAP->IsPlayerPlayingPVZ(item.player)) return SeedType::SEED_AP_OFFWORLD_ITEM;
-	return seed;
+	switch (seed)
+	{
+	case SEED_EXPLODE_O_NUT:
+	case SEED_GIANT_WALLNUT:
+	case SEED_LEFTPEATER:
+	case SEED_ZOMBIE_NORMAL:
+	case SEED_ZOMBIE_TRAFFIC_CONE:
+	case SEED_ZOMBIE_PAIL:
+	case SEED_ZOMBIE_FOOTBALL:
+	case SEED_ZOMBIE_SCREEN_DOOR:
+	case SEED_ZOMBIE_DIGGER:
+	case SEED_ZOMBIE_LADDER:
+	case SEED_ZOMBIE_BUNGEE:
+	case SEED_ZOMBIE_BALLOON:
+	case SEED_ZOMBIE_POLEVAULTER:
+	case SEED_ZOMBIE_IMP:
+	case SEED_ZOMBIE_GARGANTUAR:
+	case SEED_ZOMBIE_DANCER:
+		return SeedType::SEED_AP_OFFWORLD_ITEM;
+	default:
+		return seed;
+	}
+
 
 	// int aArea = (theLevel - 1) / LEVELS_PER_AREA + 1;
 	// int aSub = (theLevel - 1) % LEVELS_PER_AREA + 1;
