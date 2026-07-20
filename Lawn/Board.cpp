@@ -549,11 +549,14 @@ Board::Board(LawnApp* theApp)
 	{
 		if (amount > 0)
 		{
-			this->AddSunMoney(amount);
+			this->AddSunMoney(amount, true);
 		}
 		else
 		{
-			this->TakeSunMoney(-amount);
+			if (this->CanTakeSunMoney(-amount))
+			{
+				this->TakeSunMoney(-amount, true);
+			}
 		}
 	});
 	mAPSeedLinkListener = mApp->mAP->AddSeedLinkListener([this](int seed, std::string player)
