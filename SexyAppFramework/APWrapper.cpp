@@ -231,6 +231,7 @@ void APWrapper::Connect(const std::string& server_name, const std::string& slot_
     d->data_storage.clear();
     d->received_items.clear();
     d->location_scouts.clear();
+    d->processing_lawn_link = false;
     
     d->mAP = new APClient(ap_get_uuid("uuid.txt"), "Plants vs. Zombies", server_name);
     d->mAP->set_print_handler([](const std::string& print_line)
