@@ -41,4 +41,14 @@ public:
     {
         return slot_data["seedlink_enabled"].get<int>();
     }
+    
+    std::optional<PVZRAPData::SlotData::LawnlinkChance> lawnlink_chances() override
+    {
+        auto lawnlink_chances = slot_data["lawnlink_chances"];
+        return PVZRAPData::SlotData::LawnlinkChance {
+            lawnlink_chances["add_plant"].get<int>(),
+            lawnlink_chances["overwrite_plant"].get<int>(),
+            lawnlink_chances["remove_plant"].get<int>(),
+        };
+    }
 };
