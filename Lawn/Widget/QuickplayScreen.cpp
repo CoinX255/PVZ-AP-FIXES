@@ -241,9 +241,9 @@ void QuickplayWidget::Update() {
 		}
 	}
 
-	if (mWidgetManager->mFocusWidget == this)
+	if (mWidgetManager->mFocusWidget)
 	{
-		if (mIsScrollable)
+		if (mIsScrollable && mWidgetManager->mFocusWidget == this)
 		{
 			const bool IS_DOWN = mWidgetManager->mFocusWidget->mIsDown;
 

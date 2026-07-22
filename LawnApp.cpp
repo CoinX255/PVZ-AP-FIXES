@@ -5570,8 +5570,11 @@ void LawnApp::SetupArchipelago()
 						this->DoDialog(Dialogs::DIALOG_ARCHIPELAGO_CONNECTING, true, "Unable to connect to Archipelago", "The slot that was connected to is not the current game.", "OK", Dialog::BUTTONS_FOOTER);
 						return;
 					}
-
+			
 					LoadProfile(aProfile);
+					
+					// Reset all bonus codes to 0 upon connection to any slot from title screen
+					ResetBonusModes();
 					
 					resume();
 					
@@ -5600,13 +5603,13 @@ void LawnApp::SetupArchipelago()
 				guid.Data1, guid.Data2, guid.Data3,
 				guid.Data4[0], guid.Data4[1], guid.Data4[2], guid.Data4[3],
 				guid.Data4[4], guid.Data4[5], guid.Data4[6], guid.Data4[7]);
-
+			
 			std::string profile_guid(buffer);
 			this->mAP->WriteDataStorage(this->mAP->DataStorageSlotPrefixed("profileGuids"), nlohmann::json::array()).add(nlohmann::json::array({profile_guid}));
 			auto profile = mProfileMgr->AddProfile(profile_guid);
 			mProfileMgr->Save();
 			LoadProfile(profile);
-
+			
 			// Reset all bonus codes to 0 upon connection to any slot from title screen
 			ResetBonusModes();
 			
