@@ -337,6 +337,11 @@ Board::Board(LawnApp* theApp)
 				}
 			case PVZRAPData::Items::RANDOM_SEED_PACKET:
 				{// Choose a random seed
+					if (mApp->IsIZombieLevel())
+					{
+						// Don't spawn seed packets on I, Zombie
+						return;
+					}
 					auto x = RandRangeInt(100, 650);
 					auto y = RandRangeInt(60, 500);
 
