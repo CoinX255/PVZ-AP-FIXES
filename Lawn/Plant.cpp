@@ -6950,6 +6950,7 @@ std::vector<ProjectileType> Plant::Projectiles(SeedType theSeedtype)
     case SeedType::SEED_STARFRUIT:
         return {ProjectileType::PROJECTILE_STAR};
     case SeedType::SEED_CACTUS:
+    case SeedType::SEED_CATTAIL:
         return {ProjectileType::PROJECTILE_SPIKE};
     case SeedType::SEED_CABBAGEPULT:
         return {ProjectileType::PROJECTILE_CABBAGE};
